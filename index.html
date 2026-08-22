@@ -767,15 +767,6 @@ function renderAreas() {
                 </div>`;
             return;
         }
-        if (area.unknown) {
-            box.innerHTML += `
-                <div class="card">
-                    <strong>${area.name}</strong>
-                    <p class="small">Scales with unbounded cultivation.</p>
-                    <button onclick="exploreUnknown()">🌌 Enter</button>
-                </div>`;
-            return;
-        }
         const locked = game.realm < area.req;
         box.innerHTML += `
             <div class="card ${locked?"locked":""}">
