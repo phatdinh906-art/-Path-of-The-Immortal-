@@ -324,7 +324,10 @@ let game = structuredClone(defaultGame);
 /* =========================================================
    CORE MULTIPLIERS
 ========================================================= */
-function prestige() { return new LogNum(game.reincarnations * Math.log10(1.25)); }
+function prestige() {
+    // Stats multiplier = total reincarnations + 1
+    return new LogNum(Math.log10(game.reincarnations + 1));
+}
 function mastery() { return LogNum.from(1 + game.weaponMastery * 0.05); }
 function lawBonus(type) {
     let bonus = 1;
