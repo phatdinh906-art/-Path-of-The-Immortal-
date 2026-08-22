@@ -663,29 +663,68 @@ function breakthrough() {
 }
 
 function reincarnate() {
-    if (game.unknownUnlocked) { notify("You have moved beyond reincarnation."); return; }
+    if (game.unknownUnlocked) {
+        notify("You have already moved beyond normal reincarnation.");
+        return;
+    }
+
     const final = normalRealms.length - 1;
-    if (game.realm !== final) { notify("Reach Immortal Ascension first."); return; }
-    if (game.cultivation < normalRealms[final].req) { notify("Immortal Ascension not maxed."); return; }
+    if (game.realm !== final) {
+        notify("You must reach Immortal Ascension first.");
+        return;
+    }
+    if (game.cultivation < normalRealms[final].req) {
+        notify("Immortal Ascension is not fully maxed.");
+        return;
+    }
 
-    const next = game.reincarnations + 1;
-    if (!confirm(`Reincarnate?\n\n${game.reincarnations} → ${next}\nPermanent bonus: ${formatMultiplier(safePow(1.25, next))}`)) return;
+    // Calculate how many reincarnations you gain based on current power
+    const totalPower = (game.baseAtk + game.baseDef) * game.level * (1 + game.cultivation / 1000) * prestigeMultiplier();
+    const gained = Math.max(1, Math.floor(Math.log10(Math.max(10, totalPower))));
 
-    game.reincarnations = next;
-    const kept = game.weapons.filter(i => weaponsData[i].soulbound);
-    const keptEq = (game.equippedWeapon !== null && weaponsData[game.equippedWeapon].soulbound) ? game.equippedWeapon : null;
-    const keptM = game.weaponMastery;
+    const nextCount = game.reincarnations + gained;
 
-    Object.assign(game, {
-        realm:0, level:1, cultivation:0, xp:0, stones:100,
-        baseAtk:10, baseDef:5, hp:100, maxHp:100,
-        techniques:[0], equipment:[], weapons:kept, equippedWeapon:keptEq,
-        weaponMastery:keptM, combat:false, enemy:null, defending:false,
-        lastSave:Date.now()
-    });
+    const confirmed = confirm(
+        `☯ REINCARNATE?\n\n` +
+        `You will gain ${gained} reincarnation(s)\n` +
+        `${formatNumber(game.reincarnations)} → ${formatNumber(nextCount)}\n\n` +
+        `Permanent power after: ${formatMultiplier(safePow(1.25, nextCount))}\n\n` +
+        `Normal progress will reset. Soulbound weapons & mastery stay.`
+    );
+    if (!confirmed) return;
 
-    log("☯ Reincarnation " + game.reincarnations + " complete.", "good");
-    notify("Reincarnation successful!");
+    // Keep permanent things
+    const keptWeapons = game.weapons.filter(i => weaponsData[i].soulbound);
+    const keptEquipped = (game.equippedWeapon !== null && weaponsData[game.equippedWeapon].soulbound)
+        ? game.equippedWeapon : null;
+    const keptMastery = game.weaponMastery;
+
+    // Apply the gain
+    game.reincarnations = nextCount;
+
+    // Reset temporary progress
+    game.realm = 0;
+    game.level = 1;
+    game.cultivation = 0;
+    game.xp = 0;
+    game.stones = 100;
+    game.baseAtk = 10;
+    game.baseDef = 5;
+    game.hp = 100;
+    game.maxHp = 100;
+    game.techniques = [0];
+    game.equipment = [];
+    game.weapons = keptWeapons;
+    game.equippedWeapon = keptEquipped;
+    game.weaponMastery = keptMastery;
+    game.combat = false;
+    game.enemy = null;
+    game.defending = false;
+    game.lastSave = Date.now();
+
+    log(`☯ Reincarnation complete! Gained ${gained} reincarnation(s).`, "good");
+    log(`Total reincarnations: ${formatNumber(game.reincarnations)}`, "mythic");
+    notify(`+${gained} Reincarnation(s)!`);
     update();
     saveGame();
 }
