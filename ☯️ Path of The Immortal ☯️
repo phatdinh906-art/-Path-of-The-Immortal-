@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Path of the Immortal</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;background:#080b12;color:#e9e4d0;
+  font-family:Georgia,serif;
+}
+button{
+  background:#171d2b;color:#eee8d0;border:1px solid #695d3b;
+  padding:10px 13px;border-radius:6px;cursor:pointer;
+  transition:.15s;font-weight:bold;
+}
+button:hover{background:#292f40;transform:translateY(-1px)}
+button:disabled{opacity:.35;cursor:not-allowed;transform:none}
+header{
+  padding:22px;text-align:center;
+  background:linear-gradient(180deg,#161325,#090b12);
+  border-bottom:1px solid #5e5030;
+}
+h1{margin:0;color:#d9bd68;letter-spacing:3px}
+.subtitle{color:#918b79;margin-top:5px}
+main{
+  max-width:1400px;margin:auto;padding:15px;
+  display:grid;grid-template-columns:300px 1fr 300px;gap:15px;
+}
+.panel{
+  background:#10151f;border:1px solid #393a3e;border-radius:9px;
+  padding:15px;box-shadow:0 5px 20px #0007;
+}
+.panel h2{
+  color:#d5b85e;font-size:18px;margin:0 0 12px;
+  border-bottom:1px solid #38342b;padding-bottom:8px;
+}
+.stat{display:flex;justify-content:space-between;margin:7px 0;color:#bbb7aa}
+.value{color:#eee}
+.bar{
+  height:13px;background:#252a32;border-radius:10px;
+  overflow:hidden;margin:5px 0 10px;border:1px solid #3c4148
+}
+.fill{height:100%;width:0;transition:.3s}
+.hp{background:#a74646}.qi{background:#477fa5}.cult{background:#a17c35}
+.card{
+  background:#151b27;border:1px solid #303744;
+  padding:10px;border-radius:7px;margin:8px 0
+}
+.card strong{color:#d6bd70}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+button.full{width:100%;margin:4px 0}
+.small{font-size:12px;color:#999}
+.log{
+  height:230px;overflow-y:auto;background:#080b10;
+  border:1px solid #30343b;padding:10px;font-size:13px;
+}
+.log div{margin-bottom:6px}
+.good{color:#7dc98c}.bad{color:#d86f6f}.gold{color:#e2c35d}
+.enemy{
+  border:1px solid #574636;background:#17130f;
+  padding:12px;border-radius:8px;margin-bottom:10px
+}
+.tech{
+  padding:10px;background:#141923;border:1px solid #3a3d48;
+  margin:7px 0;border-radius:7px
+}
+.locked{opacity:.45}
+.notice{
+  position:fixed;right:20px;bottom:20px;
+  background:#171d28;border:1px solid #b49a54;
+  padding:12px 18px;border-radius:8px;
+  opacity:0;pointer-events:none;transition:.25s;
+  z-index:10
+}
+.notice.show{opacity:1}
+.tabs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.tab{font-size:12px}
+.hidden{display:none}
+@media(max-width:1050px){
+ main{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+<h1>☯ PATH OF THE IMMORTAL ☯</h1>
+<div class="subtitle">A Journey Beyond the Mortal Realm</div>
+</header>
+
+<main>
+
+<!-- CHARACTER -->
+<section class="panel">
+<h2>☯ Cultivator</h2>
+
+<div class="card">
+  <div class="stat"><span>Name</span><span id="name">Wandering Disciple</span></div>
+  <div class="stat"><span>Realm</span><strong id="realm">Mortal</strong></div>
+  <div class="stat"><span>Level</span><span id="level">1</span></div>
+</div>
+
+<div class="stat"><span>HP</span><span id="hpText"></span></div>
+<div class="bar"><div id="hpBar" class="fill hp"></div></div>
+
+<div class="stat"><span>Qi</span><span id="qiText"></span></div>
+<div class="bar"><div id="qiBar" class="fill qi"></div></div>
+
+<div class="stat"><span>Cultivation</span><span id="cultText"></span></div>
+<div class="bar"><div id="cultBar" class="fill cult"></div></div>
+
+<div class="card">
+<div class="stat"><span>⚔ Attack</span><strong id="atk"></strong></div>
+<div class="stat"><span>🛡 Defense</span><strong id="def"></strong></div>
+<div class="stat"><span>💠 Spirit Stones</span><strong id="stones"></strong></div>
+<div class="stat"><span>⭐ Experience</span><strong id="xp"></strong></div>
+</div>
+
+<button class="full" onclick="meditate()">🧘 Meditate</button>
+<button class="full" onclick="breakthrough()">☯ Attempt Breakthrough</button>
+<button class="full" onclick="heal()">🌿 Restore HP</button>
+<button class="full" onclick="saveGame()">💾 Save</button>
+<button class="full" onclick="resetGame()">♻ New Journey</button>
+</section>
+
+
+<!-- CENTER -->
+<section class="panel">
+
+<div class="tabs">
+<button class="tab" onclick="showTab('cultivation')">Cultivation</button>
+<button class="tab" onclick="showTab('combat')">Combat</button>
+<button class="tab" onclick="showTab('explore')">Explore</button>
+<button class="tab" onclick="showTab('techniques')">Techniques</button>
+<button class="tab" onclick="showTab('inventory')">Inventory</button>
+</div>
+
+<!-- CULTIVATION -->
+<div id="cultivation">
+<h2>☯ Cultivation</h2>
+
+<div class="card">
+<strong>The Dao Meridian</strong>
+<p>
+Meditation gathers spiritual energy from heaven and earth.
+Your cultivation progresses automatically while you remain in this world.
+</p>
+<div class="stat">
+<span>Qi Generation</span><strong id="qiRate"></strong>
+</div>
+<div class="stat">
+<span>Next Realm Requirement</span><strong id="nextReq"></strong>
+</div>
+</div>
+
+<div class="card">
+<strong>Attribute Training</strong>
+<p class="small">Spend spirit stones to permanently improve your foundation.</p>
+<div class="grid">
+<button onclick="upgrade('atk')">Train Attack<br>💠 <span id="atkCost"></span></button>
+<button onclick="upgrade('def')">Train Defense<br>💠 <span id="defCost"></span></button>
+</div>
+</div>
+
+<div class="card">
+<strong>Realm Progression</strong>
+<div id="realmList"></div>
+</div>
+</div>
+
+<!-- COMBAT -->
+<div id="combat" class="hidden">
+<h2>⚔ Mortal Combat</h2>
+
+<div id="enemyArea">
+<div class="card">
+<strong>No enemy selected.</strong>
+<p>Travel to an area and encounter an enemy.</p>
+</div>
+</div>
+
+<div id="combatControls" class="hidden">
+<div class="grid">
+<button onclick="playerAttack()">⚔ Attack</button>
+<button onclick="defend()">🛡 Defend</button>
+</div>
+<div id="combatTechniques"></div>
+</div>
+
+<h2>Combat Log</h2>
+<div id="log" class="log"></div>
+</div>
+
+<!-- EXPLORE -->
+<div id="explore" class="hidden">
+<h2>🗺 Exploration</h2>
+<p class="small">Danger increases with every region.</p>
+<div id="areas"></div>
+</div>
+
+<!-- TECHNIQUES -->
+<div id="techniques" class="hidden">
+<h2>📜 Techniques</h2>
+<div id="techList"></div>
+</div>
+
+<!-- INVENTORY -->
+<div id="inventory" class="hidden">
+<h2>🎒 Inventory & Artifacts</h2>
+<div id="inventoryList"></div>
+</div>
+
+</section>
+
+
+<!-- RIGHT -->
+<section class="panel">
+<h2>☯ Dao Journal</h2>
+<div class="card">
+<strong>Current Path</strong>
+<p id="path">A nameless mortal seeking immortality.</p>
+</div>
+
+<div class="card">
+<strong>Breakthrough Bonus</strong>
+<p id="bonus"></p>
+</div>
+
+<h2>🌌 World Events</h2>
+<div id="events" class="small"></div>
+
+<h2>📖 Guidance</h2>
+<div class="small">
+<p>• Meditate to gather Qi.</p>
+<p>• Explore to find enemies.</p>
+<p>• Defeat enemies to gain stones and XP.</p>
+<p>• Upgrade your foundation.</p>
+<p>• Learn techniques.</p>
+<p>• Break through when your cultivation is sufficient.</p>
+<p>• Higher realms unlock stronger enemies.</p>
+</div>
+</section>
+
+</main>
+
+<div id="notice" class="notice"></div>
+
+<script>
+"use strict";
+
+/* =========================
+   GAME DATA
+========================= */
+
+const realms = [
+ {name:"Mortal", req:100, mult:1},
+ {name:"Qi Gathering", req:500, mult:1.7},
+ {name:"Qi Condensation", req:1800, mult:3},
+ {name:"Foundation Establishment", req:6000, mult:5.2},
+ {name:"Core Formation", req:18000, mult:8.5},
+ {name:"Nascent Soul", req:55000, mult:14},
+ {name:"Soul Transformation", req:160000, mult:23},
+ {name:"Void Refinement", req:480000, mult:38},
+ {name:"Body Integration", req:1400000, mult:62},
+ {name:"Tribulation Transcendence", req:4500000, mult:105},
+ {name:"Immortal Ascension", req:15000000, mult:180}
+];
+
+const enemies = [
+ {name:"Wild Boar",realm:0,hp:45,atk:7,def:2,xp:12,stones:10},
+ {name:"Iron Wolf",realm:0,hp:70,atk:12,def:4,xp:20,stones:16},
+ {name:"Blood Viper",realm:1,hp:110,atk:19,def:6,xp:35,stones:25},
+ {name:"Mountain Bandit",realm:1,hp:150,atk:24,def:9,xp:45,stones:35},
+ {name:"Spirit Ape",realm:2,hp:250,atk:38,def:14,xp:70,stones:55},
+ {name:"Demonized Bear",realm:2,hp:340,atk:45,def:20,xp:90,stones:75},
+ {name:"Azure Serpent",realm:3,hp:550,atk:68,def:28,xp:140,stones:110},
+ {name:"Sword Sect Disciple",realm:4,hp:850,atk:100,def:45,xp:230,stones:180},
+ {name:"Blood Demon",realm:5,hp:1400,atk:165,def:70,xp:400,stones:300},
+ {name:"Void Wraith",realm:6,hp:2500,atk:260,def:110,xp:700,stones:550},
+ {name:"Ancient Dragon",realm:8,hp:8000,atk:650,def:300,xp:2000,stones:1600},
+ {name:"Heavenly Beast",realm:9,hp:16000,atk:1100,def:550,xp:5000,stones:4000}
+];
+
+const areas = [
+ {name:"Greenwood Forest",req:0,enemies:[0,1,2]},
+ {name:"Crimson Mountains",req:1,enemies:[2,3,4]},
+ {name:"Demon Valley",req:2,enemies:[4,5,6]},
+ {name:"Azure Sect Ruins",req:3,enemies:[6,7]},
+ {name:"Blood Moon Domain",req:5,enemies:[8,9]},
+ {name:"Void Sea",req:6,enemies:[9,10]},
+ {name:"Heavenly Battlefield",req:8,enemies:[10,11]}
+];
+
+const techniques = [
+ {
+  name:"Breathing Technique",
+  quality:"Common",
+  req:0,cost:0,
+  desc:"+20% Qi generation.",
+  passive:"qi"
+ },
+ {
+  name:"Iron Body",
+  quality:"Common",
+  req:1,cost:80,
+  desc:"+25% Defense.",
+  passive:"def"
+ },
+ {
+  name:"Mountain Fist",
+  quality:"Uncommon",
+  req:1,cost:120,
+  desc:"Attack for 1.8× Attack.",
+  skill:1.8
+ },
+ {
+  name:"Azure Sword",
+  quality:"Rare",
+  req:2,cost:400,
+  desc:"Attack for 2.5× Attack.",
+  skill:2.5
+ },
+ {
+  name:"Flame Palm",
+  quality:"Rare",
+  req:3,cost:900,
+  desc:"Attack for 3× Attack and burn the enemy.",
+  skill:3,
+  burn:true
+ },
+ {
+  name:"Soul Severing",
+  quality:"Epic",
+  req:5,cost:4000,
+  desc:"Attack for 4.5× Attack.",
+  skill:4.5
+ },
+ {
+  name:"Void Annihilation",
+  quality:"Legendary",
+  req:7,cost:15000,
+  desc:"Attack for 7× Attack.",
+  skill:7
+ }
+];
+
+
+/* =========================
+   STATE
+========================= */
+
+let game = {
+ realm:0,
+ level:1,
+ qi:0,
+ cultivation:0,
+ xp:0,
+ stones:100,
+ baseAtk:10,
+ baseDef:5,
+ hp:100,
+ maxHp:100,
+ techniques:[0],
+ equipment:[],
+ lastSave:Date.now(),
+ meditationTime:Date.now(),
+ breakthroughBonus:1,
+ area:0,
+ enemy:null,
+ defending:false,
+ combat:false
+};
+
+
+/* =========================
+   HELPERS
+========================= */
+
+function currentRealm(){
+ return realms[game.realm];
+}
+
+function effectiveAtk(){
+ return Math.floor(game.baseAtk * currentRealm().mult);
+}
+
+function effectiveDef(){
+ let d=game.baseDef*currentRealm().mult;
+ if(game.techniques.includes(1)) d*=1.25;
+ return Math.floor(d);
+}
+
+function qiRate(){
+ let rate=.8*currentRealm().mult;
+ if(game.techniques.includes(0)) rate*=1.2;
+ return rate*game.breakthroughBonus;
+}
+
+function xpNeeded(){
+ return Math.floor(100*Math.pow(game.level,1.65));
+}
+
+function upgradeCost(stat){
+ let base=stat==="atk"?50:60;
+ let value=stat==="atk"?game.baseAtk:game.baseDef;
+ return Math.floor(base*Math.pow(value/(stat==="atk"?10:5),1.35));
+}
+
+function notify(text){
+ const n=document.getElementById("notice");
+ n.textContent=text;
+ n.classList.add("show");
+ setTimeout(()=>n.classList.remove("show"),1800);
+}
+
+function log(text,cls=""){
+ const box=document.getElementById("log");
+ const d=document.createElement("div");
+ d.className=cls;
+ d.textContent=text;
+ box.appendChild(d);
+ box.scrollTop=box.scrollHeight;
+}
+
+function rand(min,max){
+ return Math.floor(Math.random()*(max-min+1))+min;
+}
+
+function chance(p){
+ return Math.random()<p;
+}
+
+
+/* =========================
+   UI
+========================= */
+
+function update(){
+ const r=currentRealm();
+
+ document.getElementById("realm").textContent=r.name;
+ document.getElementById("level").textContent=game.level;
+ document.getElementById("atk").textContent=effectiveAtk();
+ document.getElementById("def").textContent=effectiveDef();
+ document.getElementById("stones").textContent=Math.floor(game.stones);
+ document.getElementById("xp").textContent=game.xp+" / "+xpNeeded();
+
+ document.getElementById("hpText").textContent=
+  Math.floor(game.hp)+" / "+game.maxHp;
+ document.getElementById("hpBar").style.width=
+  Math.max(0,game.hp/game.maxHp*100)+"%";
+
+ const qiCap=r.req;
+ document.getElementById("qiText").textContent=
+  Math.floor(game.qi)+" / "+qiCap;
+ document.getElementById("qiBar").style.width=
+  Math.min(100,game.qi/qiCap*100)+"%";
+
+ document.getElementById("cultText").textContent=
+  Math.floor(game.cultivation)+" / "+r.req;
+ document.getElementById("cultBar").style.width=
+  Math.min(100,game.cultivation/r.req*100)+"%";
+
+ document.getElementById("qiRate").textContent=
+  qiRate().toFixed(1)+" Qi/sec";
+
+ const next=realms[game.realm+1];
+ document.getElementById("nextReq").textContent=
+  next ? next.req.toLocaleString()+" cultivation" : "MAXIMUM";
+
+ document.getElementById("atkCost").textContent=upgradeCost("atk");
+ document.getElementById("defCost").textContent=upgradeCost("def");
+
+ document.getElementById("bonus").textContent=
+  "×"+game.breakthroughBonus.toFixed(2)+" cultivation efficiency";
+
+ renderRealms();
+ renderTechniques();
+ renderInventory();
+ renderAreas();
+
+ if(game.enemy) renderEnemy();
+}
+
+
+/* =========================
+   CULTIVATION
+========================= */
+
+function meditate(){
+ const gain=qiRate()*8;
+ game.qi+=gain;
+ game.cultivation+=gain;
+
+ notify("+"+Math.floor(gain)+" Qi");
+ update();
+ randomEvent(.08);
+}
+
+function breakthrough(){
+ if(game.realm>=realms.length-1){
+  notify("You have reached the peak of the known Dao.");
+  return;
+ }
+
+ const req=currentRealm().req;
+
+ if(game.cultivation<req){
+  notify("Your cultivation is insufficient.");
+  return;
+ }
+
+ const next=realms[game.realm+1];
+
+ let successChance=
+   Math.min(.92,.45+game.realm*.045);
+
+ if(chance(successChance)){
+   game.realm++;
+   game.qi=0;
+   game.cultivation=0;
+
+   const bonus=1+game.realm*.035;
+   game.breakthroughBonus*=bonus;
+
+   game.maxHp=Math.floor(game.maxHp*next.mult/realms[game.realm-1].mult*1.15);
+   game.hp=game.maxHp;
+
+   game.baseAtk=Math.floor(game.baseAtk*1.18);
+   game.baseDef=Math.floor(game.baseDef*1.18);
+
+   notify("BREAKTHROUGH SUCCESS!");
+   log("☯ You broke through into "+next.name+"!","good");
+   log("Your foundation has been strengthened.","good");
+
+   if(chance(.25)){
+     game.stones+=game.realm*100;
+     log("A breakthrough omen grants spirit stones.","gold");
+   }
+ }else{
+   game.cultivation=Math.floor(game.cultivation*.72);
+   game.qi=Math.floor(game.qi*.8);
+   game.hp=Math.max(1,Math.floor(game.hp*.65));
+
+   notify("Breakthrough failed!");
+   log("☯ The heavenly pressure overwhelms you. Your cultivation slips.","bad");
+ }
+
+ update();
+}
+
+
+/* =========================
+   OFFLINE CULTIVATION
+========================= */
+
+function processOffline(){
+ const now=Date.now();
+ const seconds=Math.min((now-game.lastSave)/1000,60*60*12);
+
+ if(seconds>5){
+   const gain=qiRate()*seconds;
+   game.qi+=gain;
+   game.cultivation+=gain;
+   notify("Offline cultivation: +"+Math.floor(gain)+" Qi");
+ }
+
+ game.lastSave=now;
+}
+
+
+/* =========================
+   UPGRADES
+========================= */
+
+function upgrade(stat){
+ const cost=upgradeCost(stat);
+
+ if(game.stones<cost){
+   notify("Not enough spirit stones.");
+   return;
+ }
+
+ game.stones-=cost;
+
+ if(stat==="atk"){
+   game.baseAtk++;
+ }else{
+   game.baseDef++;
+ }
+
+ notify("Foundation strengthened.");
+ update();
+}
+
+
+/* =========================
+   EXPLORATION
+========================= */
+
+function renderAreas(){
+ const box=document.getElementById("areas");
+ box.innerHTML="";
+
+ areas.forEach((a,i)=>{
+   const locked=game.realm<a.req;
+
+   const div=document.createElement("div");
+   div.className="card"+(locked?" locked":"");
+
+   div.innerHTML=`
+    <strong>${a.name}</strong>
+    <p class="small">
+      Required Realm: ${realms[a.req].name}
+    </p>
+    <button ${locked?"disabled":""} onclick="explore(${i})">
+      ${locked?"🔒 Locked":"🌌 Enter"}
+    </button>
+   `;
+
+   box.appendChild(div);
+ });
+}
+
+function explore(index){
+ const area=areas[index];
+
+ if(game.realm<area.req)return;
+
+ game.area=index;
+
+ if(chance(.25)){
+   randomEvent(1);
+   return;
+ }
+
+ const enemyIndex=
+   area.enemies[rand(0,area.enemies.length-1)];
+
+ startCombat(enemyIndex);
+ showTab("combat");
+}
+
+function randomEvent(force=.1){
+ if(!chance(force))return;
+
+ const events=[
+  ()=>{
+   const gain=rand(10,40)*(game.realm+1);
+   game.stones+=gain;
+   log("🌿 You discover a hidden spirit-stone vein.","good");
+   notify("Found "+gain+" spirit stones!");
+  },
+  ()=>{
+   const gain=rand(5,15)*(game.realm+1);
+   game.qi+=gain;
+   game.cultivation+=gain;
+   log("☯ A spiritual spring nourishes your meridians.","good");
+  },
+  ()=>{
+   game.hp=Math.min(game.maxHp,game.hp+game.maxHp*.25);
+   log("🌸 You find a rare healing herb.","good");
+   notify("HP restored.");
+  },
+  ()=>{
+   game.stones=Math.max(0,game.stones-rand(5,20));
+   log("🐍 A venomous creature steals some spirit stones.","bad");
+  }
+ ];
+
+ const event=events[rand(0,events.length-1)];
+ event();
+ update();
+}
+
+
+/* =========================
+   COMBAT
+========================= */
+
+function startCombat(index){
+ const e=enemies[index];
+
+ const scale=1+Math.max(0,game.realm-e.realm)*.12;
+
+ game.enemy={
+   ...e,
+   maxHp:Math.floor(e.hp*scale),
+   hp:Math.floor(e.hp*scale),
+   atk:Math.floor(e.atk*scale),
+   def:Math.floor(e.def*scale)
+ };
+
+ game.combat=true;
+ game.defending=false;
+
+ log("⚔ You encounter a "+e.name+"!","bad");
+ renderEnemy();
+ update();
+}
+
+function renderEnemy(){
+ const e=game.enemy;
+ if(!e)return;
+
+ document.getElementById("enemyArea").innerHTML=`
+  <div class="enemy">
+   <strong>☠ ${e.name}</strong>
+   <div class="stat">
+    <span>Realm</span>
+    <span>${realms[e.realm]?.name||"Unknown"}</span>
+   </div>
+   <div class="stat">
+    <span>HP</span>
+    <span>${Math.max(0,Math.floor(e.hp))} / ${e.maxHp}</span>
+   </div>
+   <div class="bar">
+    <div class="fill hp" style="width:${Math.max(0,e.hp/e.maxHp*100)}%"></div>
+   </div>
+   <div class="stat"><span>Attack</span><span>${e.atk}</span></div>
+   <div class="stat"><span>Defense</span><span>${e.def}</span></div>
+  </div>
+ `;
+
+ document.getElementById("combatControls")
+   .classList.toggle("hidden",!game.combat);
+ renderCombatTechniques();
+}
+
+function damage(attacker,defender){
+ let raw=Math.max(1,attacker-defender*.55);
+ return Math.floor(raw);
+}
+
+function playerAttack(){
+ if(!game.combat)return;
+
+ let dmg=damage(effectiveAtk(),game.enemy.def);
+
+ let crit=chance(.12);
+ if(crit)dmg*=2;
+
+ dmg=Math.floor(dmg);
+
+ game.enemy.hp-=dmg;
+
+ log(
+   "⚔ You strike for "+dmg+
+   (crit?" CRITICAL DAMAGE!":" damage."),
+   "good"
+ );
+
+ if(game.enemy.hp<=0){
+   victory();
+   return;
+ }
+
+ enemyTurn();
+ update();
+}
+
+function defend(){
+ if(!game.combat)return;
+
+ game.defending=true;
+ log("🛡 You brace yourself. Incoming damage reduced.","good");
+ enemyTurn();
+}
+
+function useTechnique(index){
+ if(!game.combat)return;
+
+ const t=techniques[index];
+ if(!game.techniques.includes(index))return;
+ if(!t.skill)return;
+
+ let dmg=damage(effectiveAtk()*t.skill,game.enemy.def);
+
+ if(chance(.15))dmg*=2;
+
+ dmg=Math.floor(dmg);
+
+ game.enemy.hp-=dmg;
+
+ log("📜 "+t.name+" deals "+dmg+" damage!","good");
+
+ if(t.burn && game.enemy.hp>0){
+   const burn=Math.floor(effectiveAtk()*.5);
+   game.enemy.hp-=burn;
+   log("🔥 Burning energy deals "+burn+" additional damage.","good");
+ }
+
+ if(game.enemy.hp<=0){
+   victory();
+   return;
+ }
+
+ enemyTurn();
+ update();
+}
+
+function enemyTurn(){
+ if(!game.combat)return;
+
+ let dmg=damage(game.enemy.atk,effectiveDef());
+
+ if(game.defending){
+   dmg=Math.floor(dmg*.35);
+   game.defending=false;
+ }
+
+ if(chance(.08)){
+   dmg*=2;
+   log("☠ "+game.enemy.name+" lands a CRITICAL HIT!","bad");
+ }
+
+ dmg=Math.floor(dmg);
+ game.hp-=dmg;
+
+ log(
+  "☠ "+game.enemy.name+" hits you for "+dmg+".",
+  "bad"
+ );
+
+ if(game.hp<=0){
+   game.hp=1;
+   game.stones=Math.floor(game.stones*.85);
+   game.qi=Math.floor(game.qi*.8);
+   game.combat=false;
+   game.enemy=null;
+
+   log("☯ You barely escape with your life.","bad");
+   notify("Defeated — resources lost.");
+ }
+
+ renderEnemy();
+}
+
+function victory(){
+ const e=game.enemy;
+
+ game.combat=false;
+ game.enemy=null;
+
+ const stoneGain=Math.floor(
+   e.stones*(1+game.realm*.08)
+ );
+
+ game.stones+=stoneGain;
+ game.xp+=e.xp;
+
+ log("🏆 Victory over "+e.name+"!","good");
+ log("+"+stoneGain+" spirit stones.","gold");
+ log("+"+e.xp+" experience.","good");
+
+ checkLevel();
+
+ if(chance(.18)){
+   const qiGain=e.xp*(game.realm+1);
+   game.qi+=qiGain;
+   game.cultivation+=qiGain;
+   log("☯ You absorb residual spiritual energy.","good");
+ }
+
+ if(chance(.07)){
+   findArtifact();
+ }
+
+ update();
+}
+
+function checkLevel(){
+ while(game.xp>=xpNeeded()){
+   game.xp-=xpNeeded();
+   game.level++;
+
+   game.baseAtk+=2;
+   game.baseDef+=1;
+   game.maxHp+=15;
+   game.hp=game.maxHp;
+
+   log("⭐ You reached level "+game.level+"!","good");
+ }
+}
+
+
+/* =========================
+   TECHNIQUES
+========================= */
+
+function renderTechniques(){
+ const box=document.getElementById("techList");
+ box.innerHTML="";
+
+ techniques.forEach((t,i)=>{
+   const owned=game.techniques.includes(i);
+   const locked=game.realm<t.req;
+
+   let button="";
+
+   if(owned){
+     button=`<button disabled>✓ Learned</button>`;
+   }else if(locked){
+     button=`<button disabled>🔒 Requires ${realms[t.req].name}</button>`;
+   }else{
+     button=
+       `<button onclick="learnTechnique(${i})">
+        Learn — 💠 ${t.cost}
+       </button>`;
+   }
+
+   box.innerHTML+=`
+    <div class="tech ${locked&&!owned?"locked":""}">
+     <strong>${t.name}</strong>
+     <span class="small"> — ${t.quality}</span>
+     <p class="small">${t.desc}</p>
+     ${button}
+    </div>
+   `;
+ });
+
+ renderCombatTechniques();
+}
+
+function renderCombatTechniques(){
+ const box=document.getElementById("combatTechniques");
+ box.innerHTML="";
+
+ if(!game.combat)return;
+
+ game.techniques.forEach(i=>{
+   const t=techniques[i];
+
+   if(!t.skill)return;
+
+   const b=document.createElement("button");
+   b.className="full";
+   b.textContent="📜 "+t.name;
+   b.onclick=()=>useTechnique(i);
+
+   box.appendChild(b);
+ });
+}
+
+function learnTechnique(i){
+ const t=techniques[i];
+
+ if(game.techniques.includes(i))return;
+
+ if(game.realm<t.req){
+   notify("Your realm is too low.");
+   return;
+ }
+
+ if(game.stones<t.cost){
+   notify("Not enough spirit stones.");
+   return;
+ }
+
+ game.stones-=t.cost;
+ game.techniques.push(i);
+
+ log("📜 You learned "+t.name+"!","good");
+ notify("Technique learned.");
+
+ update();
+}
+
+
+/* =========================
+   ARTIFACTS
+========================= */
+
+const artifacts=[
+ {name:"Jade Spirit Ring",desc:"+15% Qi generation",type:"qi"},
+ {name:"Iron Guardian Talisman",desc:"+20 Defense",type:"def"},
+ {name:"Heavenly Sword Fragment",desc:"+30 Attack",type:"atk"},
+ {name:"Phoenix Feather",desc:"+10% maximum HP",type:"hp"}
+];
+
+function findArtifact(){
+ const a=artifacts[rand(0,artifacts.length-1)];
+
+ if(game.equipment.includes(a.name)){
+   game.stones+=100;
+   log("You found another "+a.name+" and sell it for 100 stones.","gold");
+   return;
+ }
+
+ game.equipment.push(a.name);
+ log("✨ Artifact discovered: "+a.name+" — "+a.desc,"good");
+ notify("Rare artifact found!");
+}
+
+function renderInventory(){
+ const box=document.getElementById("inventoryList");
+
+ if(game.equipment.length===0){
+   box.innerHTML=
+    `<div class="card small">Your inventory is empty.</div>`;
+   return;
+ }
+
+ box.innerHTML="";
+
+ game.equipment.forEach(name=>{
+   const a=artifacts.find(x=>x.name===name);
+   box.innerHTML+=`
+    <div class="card">
+      <strong>✨ ${a.name}</strong>
+      <p class="small">${a.desc}</p>
+    </div>
+   `;
+ });
+}
+
+
+/* =========================
+   REALMS
+========================= */
+
+function renderRealms(){
+ const box=document.getElementById("realmList");
+ box.innerHTML="";
+
+ realms.forEach((r,i)=>{
+   const state=
+     i<game.realm ? "✓ Completed" :
+     i===game.realm ? "☯ Current" :
+     "🔒 Locked";
+
+   box.innerHTML+=`
+    <div class="stat">
+      <span>${i+1}. ${r.name}</span>
+      <span>${state}</span>
+    </div>
+   `;
+ });
+}
+
+
+/* =========================
+   HEALING
+========================= */
+
+function heal(){
+ const missing=game.maxHp-game.hp;
+
+ if(missing<=0){
+   notify("Your body is already restored.");
+   return;
+ }
+
+ const cost=Math.max(5,Math.floor(missing*.15));
+
+ if(game.stones<cost){
+   notify("Not enough spirit stones.");
+   return;
+ }
+
+ game.stones-=cost;
+ game.hp=game.maxHp;
+
+ notify("Body restored.");
+ update();
+}
+
+
+/* =========================
+   SAVE / LOAD
+========================= */
+
+function saveGame(){
+ game.lastSave=Date.now();
+ localStorage.setItem(
+  "pathOfTheImmortalSave",
+  JSON.stringify(game)
+ );
+
+ notify("Game saved.");
+}
+
+function loadGame(){
+ const raw=localStorage.getItem("pathOfTheImmortalSave");
+
+ if(!raw)return;
+
+ try{
+   const saved=JSON.parse(raw);
+   game=Object.assign(game,saved);
+   processOffline();
+ }catch(e){
+   console.error(e);
+ }
+}
+
+function resetGame(){
+ if(!confirm("Start a completely new cultivation journey?"))return;
+
+ localStorage.removeItem("pathOfTheImmortalSave");
+
+ location.reload();
+}
+
+
+/* =========================
+   TABS
+========================= */
+
+function showTab(id){
+ ["cultivation","combat","explore","techniques","inventory"]
+ .forEach(x=>{
+   document.getElementById(x).classList.toggle("hidden",x!==id);
+ });
+}
+
+
+/* =========================
+   AUTOMATIC CULTIVATION
+========================= */
+
+setInterval(()=>{
+ if(!game.combat){
+   const gain=qiRate();
+
+   game.qi+=gain;
+   game.cultivation+=gain;
+
+   if(game.cultivation>=currentRealm().req){
+     notify("Cultivation foundation is ready for breakthrough.");
+   }
+ }
+
+ update();
+},1000);
+
+
+/* =========================
+   AUTOSAVE
+========================= */
+
+setInterval(saveGame,30000);
+
+
+/* =========================
+   START
+========================= */
+
+loadGame();
+
+log("☯ Welcome, cultivator.","good");
+log("Your journey toward immortality begins.","good");
+
+update();
+
+</script>
+</body>
+</html>
