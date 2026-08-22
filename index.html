@@ -825,8 +825,23 @@ function updateReincarnationUI(){
 
     document.getElementById("unknownStatus").textContent = game.unknownUnlocked ? "✓ UNLOCKED" : "🔒 Locked";
     if(game.unknownUnlocked){
-        document.getElementById("unknownRequirement").innerHTML = '<span class="success">✓ The Unknown Realm has been reached. Cultivation and HP progression are now unbounded. Infinite Chaos is open.</span>';
+    document.getElementById("unknownRequirement").innerHTML = 
+        '<span class="success">✓ The Unknown Realm has been reached. Cultivation and HP progression are now unbounded. Infinite Chaos is open.</span>';
+} else if(game.reincarnations >= 8){
+    // Only start showing the real requirement when the player is close
+    const remaining = Math.max(0, 10 - game.reincarnations);
+    if(remaining > 0){
+        document.getElementById("unknownRequirement").textContent = 
+            "Unknown Realm requires 10 reincarnations. Current: " + game.reincarnations + "/10. You need " + remaining + " more reincarnation(s), then you must max Immortal Ascension again.";
     } else {
+        document.getElementById("unknownRequirement").innerHTML = 
+            '<span class="success">✓ 10 reincarnations completed. Max Immortal Ascension again to break through into the Unknown Realm.</span>';
+    }
+} else {
+    // Completely hide the concept for early players
+    document.getElementById("unknownRequirement").textContent = 
+        "Continue reincarnating and ascending. Greater paths will reveal themselves in time.";
+}
         const remaining = Math.max(0, 10 - count);
         if(remaining > 0){
             document.getElementById("unknownRequirement").textContent = "Unknown Realm requires 10 reincarnations. Current: " + count + "/10. You need " + remaining + " more reincarnation(s), then you must max Immortal Ascension again.";
@@ -837,12 +852,12 @@ function updateReincarnationUI(){
 
     document.getElementById("powerSummary").textContent = formatMultiplier(prestigeMultiplier()) + " permanent power from " + game.reincarnations + " reincarnation(s).";
     if(game.unknownUnlocked){
-        document.getElementById("path").textContent = "You have stepped beyond the known Dao. Infinite Chaos awaits.";
-    } else if(game.reincarnations > 0){
-        document.getElementById("path").textContent = "A reincarnated cultivator climbing toward the Unknown Realm.";
-    } else {
-        document.getElementById("path").textContent = "A nameless mortal seeking immortality.";
-    }
+    document.getElementById("path").textContent = "You have stepped beyond the known Dao. Infinite Chaos awaits.";
+} else if(game.reincarnations > 0){
+    document.getElementById("path").textContent = "A reincarnated cultivator climbing higher.";
+} else {
+    document.getElementById("path").textContent = "A nameless mortal seeking immortality.";
+}
 }
 
 function upgrade(stat){
