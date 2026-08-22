@@ -642,13 +642,30 @@ function update(){
     document.getElementById("lastSaveTime").textContent = game.lastSave ? new Date(game.lastSave).toLocaleString() : "—";
     document.getElementById("saveVersionDisplay").textContent = String(SAVE_VERSION);
 
-    updateReincarnationUI();
+updateReincarnationUI();
     renderRealms();
     renderTechniques();
     renderWeapons();
     renderInventory();
     renderAreas();
     renderEnemy();
+    updateGuidance();
+}
+
+function updateGuidance(){
+    const list = document.getElementById("guidanceList");
+    if(!list) return;
+
+    // Clear any old post-unlock lines
+    list.querySelectorAll(".post-unlock").forEach(el => el.remove());
+
+    // Only show these after the player unlocks the Unknown Realm
+    if(game.unknownUnlocked){
+        list.innerHTML += `
+            <p class="post-unlock">• Reach the Unknown Realm.</p>
+            <p class="post-unlock">• Enter Infinite Chaos for unbounded stages.</p>
+            <p class="post-unlock">• Continue cultivating without a finite ceiling.</p>`;
+    }
 }
 
 /* =========================================================
