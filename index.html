@@ -942,30 +942,58 @@ function enemyTurn() {
 
 function victory() {
     const e = game.enemy;
-    game.combat = false; game.enemy = null;
+    game.combat = false;
+    game.enemy = null;
 
-    let stones = e.stones, xp = e.xp;
-    if (e.chaos) { stones *= e.rewardMult; xp *= e.rewardMult; }
-    else if (e.unknown) { stones *= prestigeMultiplier(); xp *= prestigeMultiplier(); }
-    else { const m = 1 + game.realm * 0.08; stones *= m; xp *= m; }
+    let stones = e.stones || 0;
+    let xp = e.xp || 0;
+
+    if (e.chaos) {
+        // Guarantee meaningful rewards even at extreme prestige
+        const mult = Math.max(1, e.rewardMult || 1);
+        stones = softCap(stones * mult);
+        xp = softCap(xp * mult);
+
+        // Minimum reward floor so you always get something
+        stones = Math.max(stones, 50 * (1 + game.chaosStage * 0.5));
+        xp = Math.max(xp, 30 * (1 + game.chaosStage * 0.4));
+    } else if (e.unknown) {
+        stones *= prestigeMultiplier();
+        xp *= prestigeMultiplier();
+    } else {
+        const m = 1 + game.realm * 0.08;
+        stones *= m;
+        xp *= m;
+    }
+
+    // Final safety
+    stones = safeNumber(stones);
+    xp = safeNumber(xp);
 
     game.stones += stones;
     game.xp += xp;
-    log("🏆 Victory!", "good");
-    log("+" + formatNumber(stones) + " stones", "gold");
+
+    log("🏆 Victory over " + e.name + "!", "good");
+    log("+" + formatNumber(stones) + " Spirit Stones", "gold");
+    log("+" + formatNumber(xp) + " experience", "good");
     checkLevel();
 
     if (e.chaos) {
-        game.cultivation += xp * Math.max(1, Math.log10(game.cultivation + 10)) * 0.6;
+        const cultGain = softCap(xp * Math.max(1, Math.log10(game.cultivation + 10)) * 0.6);
+        game.cultivation += cultGain;
+        log("☯ Absorbed Chaos energy (+" + formatNumber(cultGain) + " Cultivation)", "good");
+
         if ((e.isBoss || e.isSpecial) && chance(0.35)) {
             game.chaosStage++;
             if (game.chaosStage > game.chaosHighest) game.chaosHighest = game.chaosStage;
-            log("🌌 Stage → " + game.chaosStage, "mythic");
+            log("🌌 Stage advanced to " + game.chaosStage + "!", "mythic");
         }
     } else if (e.unknown) {
-        game.cultivation += xp * Math.max(1, Math.log10(game.cultivation + 10));
+        game.cultivation += softCap(xp * Math.max(1, Math.log10(game.cultivation + 10)));
+        log("☯ Absorbed residual energy", "good");
     } else if (chance(0.18)) {
         game.cultivation += xp * (game.realm + 1);
+        log("☯ Absorbed spiritual energy", "good");
     }
 
     if (chance(0.07)) findArtifact();
