@@ -214,6 +214,7 @@ button:disabled{
     opacity:0;
     pointer-events:none;
     transition:.25s;
+    max-width:300px;
 }
 
 .notice.show{
@@ -258,94 +259,42 @@ button:disabled{
     background:#5c3737;
 }
 
+textarea{
+    width:100%;
+    background:#080b10;
+    color:#eee7d2;
+    border:1px solid #30343c;
+    border-radius:6px;
+    padding:10px;
+    font-family:'Courier New',monospace;
+    font-size:12px;
+    line-height:1.4;
+    resize:vertical;
+    min-height:90px;
+    margin:6px 0;
+}
+
+textarea:focus{
+    outline:none;
+    border-color:#66552d;
+}
+
+textarea::placeholder{
+    color:#5a5850;
+    font-family:Georgia,serif;
+}
+
+.save-status-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+}
+
 @media(max-width:1050px){
     main{
         grid-template-columns:1fr;
     }
-}
-</style>
-
-<style>
-body {
-  margin: 0;
-  font-family: Inter, system-ui, sans-serif;
-  color: #0f172a;
-  background: #f8fafc;
-}
-
-.site-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 22px clamp(18px, 5vw, 56px);
-  background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.logo {
-  font-weight: 800;
-  letter-spacing: .02em;
-}
-
-nav {
-  display: flex;
-  gap: 16px;
-}
-
-.hero {
-  padding: clamp(38px, 8vw, 90px) clamp(18px, 5vw, 56px);
-  background: #eaf0ff;
-}
-
-.eyebrow {
-  margin: 0 0 12px;
-  color: #2563eb;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .08em;
-}
-
-h1 {
-  max-width: 720px;
-  margin: 0 0 16px;
-  font-size: clamp(36px, 8vw, 76px);
-  line-height: 1;
-}
-
-button {
-  min-height: 42px;
-  padding: 0 18px;
-  border: 0;
-  border-radius: 999px;
-  background: #2563eb;
-  color: #ffffff;
-  font-weight: 700;
-}
-
-.cards {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  padding: 24px clamp(18px, 5vw, 56px);
-}
-
-.cards article {
-  padding: 18px;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  background: #ffffff;
-}
-
-@media (max-width: 720px) {
-  .site-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .cards {
-    grid-template-columns: 1fr;
-  }
 }
 </style>
 </head>
@@ -491,6 +440,10 @@ button {
 
     <button class="tab" onclick="showTab('inventory')">
         Inventory
+    </button>
+
+    <button class="tab" onclick="showTab('saveManagement')">
+        💾 Save
     </button>
 
 </div>
@@ -753,6 +706,77 @@ button {
 <h2>🎒 Inventory & Artifacts</h2>
 
 <div id="inventoryList"></div>
+
+</div>
+
+
+<!-- SAVE MANAGEMENT -->
+<div id="saveManagement" class="hidden">
+
+<h2>💾 Save Management</h2>
+
+<div class="card prestige">
+
+    <div class="stat">
+        <span>Local Save</span>
+        <strong id="localSaveStatus" class="success">✓ Active</strong>
+    </div>
+
+    <div class="stat">
+        <span>Last Save</span>
+        <strong id="lastSaveTime">—</strong>
+    </div>
+
+    <div class="stat">
+        <span>Save Code</span>
+        <strong>Portable</strong>
+    </div>
+
+    <p class="small">Local Save: Automatically stored on this browser.</p>
+    <p class="small" style="margin-top:0;">Save Code: Portable backup that can be copied to another device. This is not a cloud save — it only moves when you copy and paste it yourself.</p>
+
+    <button class="full" onclick="saveGame()">💾 Save Now</button>
+
+</div>
+
+<div class="card">
+
+    <strong>📤 Export Save Code</strong>
+
+    <p class="small">Generates a portable text code containing your full progress, so you can back it up or bring it to another device.</p>
+
+    <button class="full" onclick="exportSaveCode()">📤 Export Save Code</button>
+
+    <div id="exportArea" class="hidden">
+        <textarea id="exportCodeText" readonly onclick="this.select()"></textarea>
+        <div class="save-status-row">
+            <button onclick="copyExportCode()">📋 Copy to Clipboard</button>
+            <span id="exportCopyStatus" class="small"></span>
+        </div>
+    </div>
+
+</div>
+
+<div class="card">
+
+    <strong>📥 Import Save Code</strong>
+
+    <p class="small warning">⚠ Importing this save will replace your current local progress. Make sure you have exported your current save first.</p>
+
+    <textarea id="importCodeText" placeholder="Paste your save code here..."></textarea>
+
+    <button class="full" onclick="importSaveCode()">📥 Import Save Code</button>
+
+</div>
+
+<div class="card">
+    <strong>ℹ About Save Codes</strong>
+    <div class="stat">
+        <span>Save Format Version</span>
+        <strong id="saveVersionDisplay">1</strong>
+    </div>
+    <p class="small">Every save code carries a version tag and an integrity checksum. Corrupted, truncated, or incompatible codes are automatically rejected — your current progress is never partially overwritten.</p>
+</div>
 
 </div>
 
@@ -1179,16 +1203,20 @@ function update(){
     
     document.getElementById("masteryBonus").textContent = `+${Math.floor(game.weaponMastery * 5)}%`;
 
+    // Save Management panel
+    const localStatusEl = document.getElementById("localSaveStatus");
+    localStatusEl.textContent = localStorageAvailable ? "✓ Active" : "✗ Unavailable";
+    localStatusEl.className = localStorageAvailable ? "success" : "warning";
+    document.getElementById("lastSaveTime").textContent = game.lastSave ? new Date(game.lastSave).toLocaleString() : "—";
+    document.getElementById("saveVersionDisplay").textContent = String(SAVE_VERSION);
+
     updateReincarnationUI();
     renderRealms();
     renderTechniques();
     renderWeapons();
     renderInventory();
     renderAreas();
-
-    if(game.enemy){
-        renderEnemy();
-    }
+    renderEnemy();
 }
 
 
@@ -2087,21 +2115,49 @@ function heal(){
 
 
 /* =========================================================
-   SAVE / LOAD
+   SAVE / LOAD (LOCAL BROWSER STORAGE)
 ========================================================= */
+
+const SAVE_KEY = "pathOfTheImmortalSave";
+
+function isLocalStorageAvailable(){
+    try{
+        const testKey = "__poi_storage_test__";
+        localStorage.setItem(testKey, "1");
+        localStorage.removeItem(testKey);
+        return true;
+    }catch(e){
+        return false;
+    }
+}
+
+const localStorageAvailable = isLocalStorageAvailable();
 
 function saveGame(){
     game.lastSave = Date.now();
-    localStorage.setItem("pathOfTheImmortalSave", JSON.stringify(game));
-    notify("Game saved.");
+
+    if(!localStorageAvailable){
+        notify("Local save unavailable — use Export Save Code instead.");
+        return;
+    }
+
+    try{
+        localStorage.setItem(SAVE_KEY, safeStringify(game));
+        notify("Game saved.");
+    }catch(error){
+        console.error("Local save failed:", error);
+        notify("Save failed — try Export Save Code instead.");
+    }
 }
 
 function loadGame(){
-    const raw = localStorage.getItem("pathOfTheImmortalSave");
+    if(!localStorageAvailable) return;
+
+    const raw = localStorage.getItem(SAVE_KEY);
     if(!raw) return;
 
     try{
-        const saved = JSON.parse(raw);
+        const saved = safeParse(raw);
         game = Object.assign(structuredClone(defaultGame), saved);
         
         // Clean up legacy property to respect "No Qi" rule unconditionally
@@ -2132,11 +2188,353 @@ function processOffline(){
 
 
 /* =========================================================
+   SAVE CODE SYSTEM (PORTABLE EXPORT / IMPORT)
+
+   A human-copyable backup of the full game state, independent
+   of localStorage. Works across devices and browsers. Every
+   code carries a magic marker, a version tag, and a checksum,
+   so corrupted or foreign text is rejected before anything
+   about the current save is touched.
+========================================================= */
+
+const SAVE_MAGIC = "PATH_OF_IMMORTAL_SAVE";
+const SAVE_VERSION = 1;
+
+// Fields every valid save state must contain, with the expected
+// JS "typeof" result. Nullable fields (equippedWeapon, enemy) and
+// array fields (techniques, equipment, weapons) are validated
+// separately below since they don't fit a single typeof check.
+const REQUIRED_STATE_FIELDS = {
+    realm: "number",
+    level: "number",
+    cultivation: "number",
+    xp: "number",
+    stones: "number",
+    baseAtk: "number",
+    baseDef: "number",
+    hp: "number",
+    maxHp: "number",
+    weaponMastery: "number",
+    reincarnations: "number",
+    unknownUnlocked: "boolean",
+    combat: "boolean",
+    defending: "boolean",
+    lastSave: "number"
+};
+
+// Migration functions are keyed by the save version they upgrade FROM.
+// None are needed yet since version 1 is the initial format, but the
+// loop below is fully functional and will apply whatever gets added
+// here as future versions are introduced.
+const saveMigrations = {};
+
+function migrateSaveState(state, fromVersion){
+    let migrated = state;
+    let v = fromVersion;
+    while(v < SAVE_VERSION){
+        if(typeof saveMigrations[v] === "function"){
+            migrated = saveMigrations[v](migrated);
+        }
+        v++;
+    }
+    return migrated;
+}
+
+// JSON has no representation for Infinity / -Infinity / NaN — plain
+// JSON.stringify silently turns them into null. The Unknown Realm can
+// legitimately produce these for HP/Attack/Cultivation over long play,
+// so they're swapped for sentinel strings going out and restored
+// coming back in, instead of relying on JSON's finite-number limits.
+function specialNumberReplacer(key, value){
+    if(typeof value === "number"){
+        if(Number.isNaN(value)) return "@@NaN@@";
+        if(value === Infinity) return "@@Infinity@@";
+        if(value === -Infinity) return "@@-Infinity@@";
+    }
+    return value;
+}
+
+function specialNumberReviver(key, value){
+    if(value === "@@NaN@@") return NaN;
+    if(value === "@@Infinity@@") return Infinity;
+    if(value === "@@-Infinity@@") return -Infinity;
+    return value;
+}
+
+function safeStringify(obj){
+    return JSON.stringify(obj, specialNumberReplacer);
+}
+
+function safeParse(str){
+    return JSON.parse(str, specialNumberReviver);
+}
+
+// Unicode-safe Base64 (plain btoa/atob only handle Latin1 and would
+// corrupt any non-ASCII character in an artifact name or similar).
+function utf8ToBase64(str){
+    const bytes = new TextEncoder().encode(str);
+    let binary = "";
+    bytes.forEach(b => { binary += String.fromCharCode(b); });
+    return btoa(binary);
+}
+
+function base64ToUtf8(b64){
+    const binary = atob(b64);
+    const bytes = new Uint8Array(binary.length);
+    for(let i = 0; i < binary.length; i++){
+        bytes[i] = binary.charCodeAt(i);
+    }
+    return new TextDecoder().decode(bytes);
+}
+
+// Lightweight non-cryptographic checksum (djb2 xor variant). This only
+// needs to catch accidental corruption/truncation, not tampering.
+function computeChecksum(str){
+    let hash = 5381;
+    for(let i = 0; i < str.length; i++){
+        hash = ((hash * 33) ^ str.charCodeAt(i)) >>> 0;
+    }
+    return hash.toString(36);
+}
+
+function snapshotGameState(){
+    return structuredClone(game);
+}
+
+function isValidIndexArray(arr, maxExclusive){
+    if(!Array.isArray(arr)) return false;
+    return arr.every(v => Number.isInteger(v) && v >= 0 && v < maxExclusive);
+}
+
+function isValidEquipmentArray(arr){
+    if(!Array.isArray(arr)) return false;
+    const validNames = artifacts.map(a => a.name);
+    return arr.every(v => typeof v === "string" && validNames.includes(v));
+}
+
+function isValidEnemyState(enemy){
+    if(enemy === null) return true;
+    if(typeof enemy !== "object") return false;
+    if(typeof enemy.name !== "string") return false;
+    const requiredNumeric = ["hp","maxHp","atk","def","xp","stones","realm"];
+    return requiredNumeric.every(f => typeof enemy[f] === "number");
+}
+
+function generateSaveCode(){
+    const state = snapshotGameState();
+    const stateStr = safeStringify(state);
+    const checksum = computeChecksum(stateStr);
+
+    const payload = {
+        magic: SAVE_MAGIC,
+        saveVersion: SAVE_VERSION,
+        exportedAt: Date.now(),
+        checksum: checksum,
+        state: stateStr
+    };
+
+    return utf8ToBase64(JSON.stringify(payload));
+}
+
+function validateAndDecodeSaveCode(code){
+    if(typeof code !== "string") return { valid:false, reason:"type" };
+
+    const trimmed = code.trim();
+    if(trimmed.length === 0) return { valid:false, reason:"empty" };
+
+    let payloadStr;
+    try{
+        payloadStr = base64ToUtf8(trimmed);
+    }catch(e){
+        return { valid:false, reason:"encoding" };
+    }
+
+    let payload;
+    try{
+        payload = JSON.parse(payloadStr);
+    }catch(e){
+        return { valid:false, reason:"json" };
+    }
+
+    if(!payload || typeof payload !== "object"){
+        return { valid:false, reason:"structure" };
+    }
+    if(payload.magic !== SAVE_MAGIC){
+        return { valid:false, reason:"magic" };
+    }
+    if(typeof payload.saveVersion !== "number" || !Number.isInteger(payload.saveVersion) || payload.saveVersion < 1 || payload.saveVersion > SAVE_VERSION){
+        return { valid:false, reason:"version" };
+    }
+    if(typeof payload.checksum !== "string" || typeof payload.state !== "string"){
+        return { valid:false, reason:"missing-fields" };
+    }
+
+    const recomputed = computeChecksum(payload.state);
+    if(recomputed !== payload.checksum){
+        return { valid:false, reason:"checksum" };
+    }
+
+    let state;
+    try{
+        state = safeParse(payload.state);
+    }catch(e){
+        return { valid:false, reason:"state-json" };
+    }
+
+    if(!state || typeof state !== "object"){
+        return { valid:false, reason:"state-structure" };
+    }
+
+    if(payload.saveVersion < SAVE_VERSION){
+        state = migrateSaveState(state, payload.saveVersion);
+    }
+
+    for(const field in REQUIRED_STATE_FIELDS){
+        const expectedType = REQUIRED_STATE_FIELDS[field];
+        if(!(field in state) || typeof state[field] !== expectedType){
+            return { valid:false, reason:"field:" + field };
+        }
+    }
+
+    if(!isValidIndexArray(state.techniques, techniques.length)){
+        return { valid:false, reason:"techniques" };
+    }
+    if(!isValidIndexArray(state.weapons, weaponsData.length)){
+        return { valid:false, reason:"weapons" };
+    }
+    if(state.equippedWeapon !== null && !(Number.isInteger(state.equippedWeapon) && state.equippedWeapon >= 0 && state.equippedWeapon < weaponsData.length)){
+        return { valid:false, reason:"equippedWeapon" };
+    }
+    if(!isValidEquipmentArray(state.equipment)){
+        return { valid:false, reason:"equipment" };
+    }
+    if(!isValidEnemyState(state.enemy)){
+        return { valid:false, reason:"enemy" };
+    }
+    if(!Number.isInteger(state.realm) || state.realm < 0 || state.realm > normalRealms.length - 1){
+        return { valid:false, reason:"realm-range" };
+    }
+
+    // Minor normalization: if the equipped weapon somehow isn't in the
+    // owned list, clear it rather than rejecting an otherwise-valid save.
+    if(state.equippedWeapon !== null && !state.weapons.includes(state.equippedWeapon)){
+        state.equippedWeapon = null;
+    }
+
+    return { valid:true, state:state, exportedAt: payload.exportedAt };
+}
+
+async function copyTextToClipboard(text){
+    if(navigator.clipboard && window.isSecureContext){
+        try{
+            await navigator.clipboard.writeText(text);
+            return true;
+        }catch(e){
+            // fall through to legacy method
+        }
+    }
+    try{
+        const temp = document.createElement("textarea");
+        temp.value = text;
+        temp.style.position = "fixed";
+        temp.style.opacity = "0";
+        temp.style.left = "-9999px";
+        document.body.appendChild(temp);
+        temp.focus();
+        temp.select();
+        const success = document.execCommand("copy");
+        document.body.removeChild(temp);
+        return success;
+    }catch(e){
+        return false;
+    }
+}
+
+async function exportSaveCode(){
+    let code;
+    try{
+        code = generateSaveCode();
+    }catch(error){
+        console.error("Save export failed:", error);
+        notify("Export failed.");
+        return;
+    }
+
+    const area = document.getElementById("exportArea");
+    const textField = document.getElementById("exportCodeText");
+    area.classList.remove("hidden");
+    textField.value = code;
+    textField.select();
+
+    const copied = await copyTextToClipboard(code);
+    document.getElementById("exportCopyStatus").textContent = copied ? "Copied to clipboard!" : "Copy manually below.";
+
+    notify("✓ Save code exported successfully.");
+    log("✓ Save code exported successfully.", "good");
+}
+
+async function copyExportCode(){
+    const textField = document.getElementById("exportCodeText");
+    if(!textField.value) return;
+
+    const copied = await copyTextToClipboard(textField.value);
+    document.getElementById("exportCopyStatus").textContent = copied ? "Copied to clipboard!" : "Copy failed — select the text manually.";
+    notify(copied ? "Copied to clipboard." : "Copy failed.");
+}
+
+function importSaveCode(){
+    const textarea = document.getElementById("importCodeText");
+    const code = textarea.value;
+
+    const result = validateAndDecodeSaveCode(code);
+
+    if(!result.valid){
+        notify("❌ Invalid save code.");
+        log("❌ Invalid save code. Your current progress has not been changed.", "bad");
+        console.warn("Save import rejected:", result.reason);
+        return;
+    }
+
+    const preview = result.state;
+    const realmName = preview.unknownUnlocked ? "??? — Unknown Realm" : (normalRealms[preview.realm] ? normalRealms[preview.realm].name : "Unknown");
+    const exportedLabel = result.exportedAt ? new Date(result.exportedAt).toLocaleString() : "Unknown";
+
+    const confirmed = confirm(
+        "📥 IMPORT SAVE CODE?\n\n" +
+        "Save code created: " + exportedLabel + "\n" +
+        "Realm: " + realmName + "\n" +
+        "Level: " + preview.level + "\n" +
+        "Reincarnations: " + preview.reincarnations + "\n\n" +
+        "Importing this save will replace your current local progress. Make sure you have exported your current save first.\n\n" +
+        "Continue?"
+    );
+
+    if(!confirmed){
+        notify("Import canceled.");
+        return;
+    }
+
+    game = Object.assign(structuredClone(defaultGame), preview);
+
+    // Clean up legacy property to respect "No Qi" rule unconditionally
+    delete game.qi;
+
+    processOffline();
+    saveGame();
+    update();
+
+    textarea.value = "";
+    notify("✓ Save imported successfully.");
+    log("✓ Save imported successfully.", "good");
+}
+
+
+/* =========================================================
    TABS
 ========================================================= */
 
 function showTab(id){
-    ["cultivation", "weapons", "combat", "explore", "techniques", "reincarnation", "inventory"].forEach(tab => {
+    ["cultivation", "weapons", "combat", "explore", "techniques", "reincarnation", "inventory", "saveManagement"].forEach(tab => {
         document.getElementById(tab).classList.toggle("hidden", tab!==id);
     });
 }
@@ -2178,15 +2576,5 @@ update();
 
 </script>
 
-
-<script>
-const button = document.querySelector("#cta");
-
-button?.addEventListener("click", () => {
-  button.textContent = "JavaScript works";
-  button.style.background = "#1a8a4a";
-});
-</script>
 </body>
 </html>
-
