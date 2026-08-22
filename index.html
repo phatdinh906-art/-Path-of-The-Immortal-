@@ -1310,14 +1310,11 @@ function renderRealms(){
         else status = "🔒 Locked";
         box.innerHTML += `<div class="realm-row"><span>${index + 1}. ${realm.name}</span><span>${status}</span></div>`;
     });
+    // Only Unknown Realm stays in the progression list
     box.innerHTML += `
         <div class="realm-row">
             <span>∞. ??? — Unknown Realm</span>
             <span>${game.unknownUnlocked ? "☯ Current" : "🔒 Locked"}</span>
-        </div>
-        <div class="realm-row">
-            <span>∞∞. 🌌 Infinite Chaos</span>
-            <span>${game.unknownUnlocked ? "Stage " + game.chaosStage : "🔒 Locked"}</span>
         </div>`;
 }
 
