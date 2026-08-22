@@ -1310,12 +1310,15 @@ function renderRealms(){
         else status = "🔒 Locked";
         box.innerHTML += `<div class="realm-row"><span>${index + 1}. ${realm.name}</span><span>${status}</span></div>`;
     });
-    // Only Unknown Realm stays in the progression list
-    box.innerHTML += `
-        <div class="realm-row">
-            <span>∞. ??? — Unknown Realm</span>
-            <span>${game.unknownUnlocked ? "☯ Current" : "🔒 Locked"}</span>
-        </div>`;
+
+    // Only show after unlocking
+    if(game.unknownUnlocked){
+        box.innerHTML += `
+            <div class="realm-row">
+                <span>∞. ??? — Unknown Realm</span>
+                <span>☯ Current</span>
+            </div>`;
+    }
 }
 
 /* =========================================================
