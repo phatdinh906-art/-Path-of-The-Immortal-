@@ -98,14 +98,10 @@ textarea{width:100%;background:#080b10;color:#eee7d2;border:1px solid #30343c;bo
 
 <!-- CULTIVATION -->
 <div id="cultivation">
-<div class="card prestige">
-    <strong>Spiritual Refining</strong>
-    <div class="grid-3">
-        <button onclick="convertStones(1)">100→100</button>
-        <button onclick="convertStones(2)">1K→1.1K</button>
-        <button onclick="convertStones(3)">10K→12.5K</button>
-    </div>
-</div>
+<strong>Spiritual Refining</strong>
+<input type="number" id="spiritStoneInput" min="1" placeholder="Enter spirit stones" style="width:100%; margin:6px 0; padding:6px; border-radius:4px; border:1px solid #66552d; background:#171d29; color:#eee7d2; font-size:14px;">
+<button onclick="convertCustomStones()" class="full">Convert Stones → Cultivation</button>
+
 <div class="card">
     <div class="stat"><span>Generation</span><strong id="cultRate"></strong></div>
     <div class="stat"><span>Next Realm</span><strong id="nextReq"></strong></div>
