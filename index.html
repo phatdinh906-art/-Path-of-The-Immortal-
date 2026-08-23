@@ -674,17 +674,17 @@ function renderWeapons() {
         const owned = game.weapons.includes(i);
         const eq = game.equippedWeapon === i;
         const locked = !game.unknownUnlocked && game.realm < w.req;
-const requirementText = !game.unknownUnlocked && game.realm < w.req ? `Requires Realm ${normalRealms[w.req].name}` : "";
-let btn;
-if (owned) {
-    btn = eq
-        ? `<button class="unequip-btn" onclick="unequipWeapon()">Unequip</button>`
-        : `<button class="equip-btn" onclick="equipWeapon(${i})">Equip</button>`;
-} else if (locked) {
-    btn = `<button disabled>Locked (${requirementText})</button>`;
-} else {
-    btn = `<button onclick="buyWeapon(${i})">Buy 💠${format(w.cost)} (${requirementText})</button>`;
-}
+        const requirementText = locked ? `Requires Realm ${normalRealms[w.req].name}` : "";
+        let btn;
+        if (owned) {
+            btn = eq
+                ? `<button class="unequip-btn" onclick="unequipWeapon()">Unequip</button>`
+                : `<button class="equip-btn" onclick="equipWeapon(${i})">Equip</button>`;
+        } else if (locked) {
+            btn = `<button disabled>Locked - ${requirementText}</button>`;
+        } else {
+            btn = `<button onclick="buyWeapon(${i})">Buy 💠${format(w.cost)}</button>`;
+        }
         box.innerHTML += `<div class="weapon-card ${locked && !owned ? "locked" : ""}">
             <strong>${w.name}${eq ? " (E)" : ""}</strong>
             <div class="small">ATK ${w.unknown ? "Scaling" : w.atk}</div>${btn}
@@ -710,12 +710,12 @@ function renderTechniques() {
     techniques.forEach((t, i) => {
         const owned = game.techniques.includes(i);
         const locked = game.realm < t.req && !game.unknownUnlocked;
-const requirementText = !game.unknownUnlocked && game.realm < t.req ? `Requires Realm ${normalRealms[t.req].name}` : "";
-const btn = owned
-    ? `<button disabled>Learned</button>`
-    : locked
-        ? `<button disabled>Locked (${requirementText})</button>`
-        : `<button onclick="learnTechnique(${i})">Learn 💠${format(t.cost)} (${requirementText})</button>`;
+        const requirementText = locked ? `Requires Realm ${normalRealms[t.req].name}` : "";
+        const btn = owned
+            ? `<button disabled>Learned</button>`
+            : locked
+                ? `<button disabled>Locked - ${requirementText}</button>`
+                : `<button onclick="learnTechnique(${i})">Learn 💠${format(t.cost)}</button>`;
         box.innerHTML += `<div class="tech ${locked && !owned ? "locked" : ""}">
             <strong>${t.name}</strong>
             <p class="small">${t.desc}</p>${btn}
@@ -795,14 +795,15 @@ function renderLaws() {
     }
     box.innerHTML = laws.map(l => {
         const owned = game.laws.includes(l.id);
+        const locked = game.reincarnations < l.cost && !game.unknownUnlocked;
+        const requirementText = locked ? `Requires ${l.cost} Reincarnations` : "";
+        const btnHtml = owned 
+            ? `<button disabled>Comprehended</button>` 
+            : `<button ${locked ? "disabled" : ""} onclick="comprehendLaw('${l.id}')">Comprehend (${l.cost} reinc)</button>`;
         return `<div class="law-card">
             <strong>${l.name}</strong>
             <p class="small">${l.desc}</p>
-            const locked = game.reincarnations < l.cost && !game.unknownUnlocked;
-const requirementText = !game.unknownUnlocked && game.reincarnations < l.cost ? `Requires ${l.cost} Reincarnations` : "";
-<button ${owned || locked ? "disabled" : ""} onclick="comprehendLaw('${l.id}')">
-    ${owned ? "Comprehended" : "Comprehend (" + l.cost + " reinc)" + (locked ? ` (${requirementText})` : "")}
-</button>
+            ${btnHtml}
         </div>`;
     }).join("");
 }
@@ -832,17 +833,17 @@ function renderTitles() {
     box.innerHTML = possibleTitles.map(t => {
         const owned = game.titles.includes(t.id);
         const active = game.activeTitles.includes(t.id);
+        const requirementMet = (t.req === "reinc" && game.reincarnations >= t.threshold) ||
+                   (t.req === "chaos" && game.chaosHighest >= t.threshold) ||
+                   (t.req === "laws" && game.laws.length >= t.threshold) ||
+                   (t.req === "disciples" && game.disciples >= t.threshold);
+        const btnText = active ? "Unequip" : (owned ? "Equip" : "Locked");
         return `<div class="title-card">
             <strong>${t.name}</strong>
             <p class="small">${t.desc}</p>
-            const requirementMet = (t.req === "reinc" && game.reincarnations >= t.threshold) ||
-                       (t.req === "chaos" && game.chaosHighest >= t.threshold) ||
-                       (t.req === "laws" && game.laws.length >= t.threshold) ||
-                       (t.req === "disciples" && game.disciples >= t.threshold);
-const requirementText = requirementMet ? "" : `Requires ${t.req === "reinc" ? t.threshold + " Reinc" : t.req === "chaos" ? t.threshold + " Chaos" : t.req === "laws" ? t.threshold + " Laws" : t.req === "disciples" ? t.threshold + " Disciples" : ""}`;
-<button ${!requirementMet ? "disabled" : ""} onclick="toggleTitle('${t.id}')">
-    ${active ? "Unequip" : (owned ? "Equip" : "Locked")}
-</button>
+            <button ${!requirementMet ? "disabled" : ""} onclick="toggleTitle('${t.id}')">
+                ${btnText}
+            </button>
         </div>`;
     }).join("");
 }
@@ -992,7 +993,7 @@ function playerAttack() {
     
     if (game.enemy.chaos) {
         let actualDmg = dmg.sub(game.enemy.def);
-        if (actualDmg.l < game.enemy.hp.l - 2) actualDmg = game.enemy.hp.mul(0.05); // Min 5% damage if too weak
+        if (actualDmg.l < game.enemy.hp.l - 2) actualDmg = game.enemy.hp.mul(0.05); 
         game.enemy.hp = game.enemy.hp.sub(actualDmg);
         if (game.enemy.hp.l === -Infinity || game.enemy.hp.l < 0) victory();
     } else {
@@ -1044,7 +1045,7 @@ function enemyTurn() {
     if (game.hp <= 0) {
         game.combat = false;
         game.enemy = null;
-        game.hp = game.maxHp * 0.1; // Revive lightly
+        game.hp = game.maxHp * 0.1; 
         game.stones = Math.floor(game.stones * 0.9);
         notify("Defeated (Lost 10% Stones)");
     }
@@ -1075,7 +1076,7 @@ function renderRealms() {
     }).join("") + (game.unknownUnlocked ? `<div class="realm-row"><span>∞ Unknown Realm</span><span>☯</span></div>` : "");
 }
 
-const SAVE_KEY = "poi_fixed_save_v1"; // Changed key to ensure old, broken, looping-crash saves don't ruin the execution
+const SAVE_KEY = "poi_fixed_save_v1";
 function saveGame() {
     game.lastSave = Date.now();
     localStorage.setItem(SAVE_KEY, JSON.stringify(game));
@@ -1150,7 +1151,7 @@ function updateTabVisibility() {
         
         const content = document.getElementById(contentId);
         if (!show && content && !content.classList.contains("hidden")) {
-            activeHidden = true; // Flags if we just hid the tab the user was actively looking at
+            activeHidden = true; 
         }
     }
 
@@ -1167,7 +1168,7 @@ function updateTabVisibility() {
     setTab("tab-reincarnation", "reincarnation", canSeeReinc);
 
     if (activeHidden) {
-        showTab("cultivation"); // Automatically bump them back to cultivation so they don't get stuck on a blank screen
+        showTab("cultivation"); 
     }
 }
 
@@ -1195,4 +1196,4 @@ if (game.combat) showTab("combat"); else showTab("cultivation");
 update();
 </script>
 </body>
-</html>
+</html
