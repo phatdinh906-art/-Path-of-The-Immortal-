@@ -375,6 +375,8 @@ function totalDef() {
 function cultRate() {
     let r = LogNum.from(0.8).mul(realmMult()).mul(lawBonus("cult"));
     if (game.disciples > 0) r = r.mul(1 + game.disciples * 0.03);
+    // Apply reincarnation multiplier to cultivation rate
+    r = r.mul(game.reincarnations + 1);
     return r;
 }
 
