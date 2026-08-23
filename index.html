@@ -2,267 +2,240 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Path of the Immortal</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#070a10;color:#eee7d2;font-family:Georgia,serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#070a10;color:#eee7d2;font-family:Georgia,serif}
 header{text-align:center;padding:18px;background:linear-gradient(#171326,#090b11);border-bottom:1px solid #66552d}
-h1{margin:0;color:#dfc56c;letter-spacing:2px;font-size:1.6rem}
+h1{color:#dfc56c;letter-spacing:2px;font-size:1.6rem}
 .subtitle{color:#979181;margin-top:4px;font-size:14px}
 main{max-width:1500px;margin:auto;padding:12px;display:grid;grid-template-columns:280px 1fr 300px;gap:12px}
-.panel{background:#10151e;border:1px solid #363a42;border-radius:8px;padding:12px;box-shadow:0 4px 20px #0008}
-.panel h2{color:#d5b963;font-size:16px;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid #38342a}
-button{background:#171d29;color:#eee7d2;border:1px solid #665735;padding:8px 10px;border-radius:5px;cursor:pointer;font-weight:bold;font-size:13px;transition:.15s}
+.panel{background:#10151e;border:1px solid #363a42;border-radius:8px;padding:12px}
+.panel h2{color:#d5b963;font-size:16px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #38342a}
+button{background:#171d29;color:#eee7d2;border:1px solid #665735;padding:8px 10px;border-radius:5px;cursor:pointer;font-weight:bold;font-size:13px}
 button:hover{background:#292f3d}
-button:disabled{opacity:.35;cursor:not-allowed}
+button:disabled{opacity:.4;cursor:not-allowed}
 .full{width:100%;margin:3px 0}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
 .card{background:#151b26;border:1px solid #303641;border-radius:6px;padding:9px;margin:6px 0}
-.stat{display:flex;justify-content:space-between;gap:8px;margin:5px 0;color:#aaa99e;font-size:13px}
+.stat{display:flex;justify-content:space-between;margin:5px 0;color:#aaa99e;font-size:13px}
 .stat strong{color:#eee}
-.bar{height:12px;background:#252a32;border:1px solid #3d4148;border-radius:8px;overflow:hidden;margin:4px 0 8px}
-.fill{height:100%;width:0;transition:.25s}
-.hp{background:#a94646}.cult{background:#a17e38}.xp{background:#7766a5}.karma{background:#c47b3a}
+.bar{height:12px;background:#252a32;border-radius:8px;overflow:hidden;margin:4px 0 8px}
+.fill{height:100%;transition:.25s}
+.hp{background:#a94646}.cult{background:#a17e38}
 .small{font-size:11px;color:#99978c}
 .tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
 .tab{font-size:11px;padding:6px 8px}
 .hidden{display:none !important}
 .log{height:200px;overflow-y:auto;background:#080b10;border:1px solid #30343c;padding:8px;font-size:12px}
-.log div{margin-bottom:5px}
 .good{color:#7dca8b}.bad{color:#dc7272}.gold{color:#e1c25c}.mythic{color:#c471ed}
 .enemy{background:#17130f;border:1px solid #604936;border-radius:6px;padding:10px;margin-bottom:8px}
-.tech,.weapon-card,.relic-card,.title-card,.law-card{background:#141923;border:1px solid #393d47;border-radius:6px;padding:8px;margin:5px 0}
+.weapon-card,.tech,.law-card,.relic-card,.title-card{background:#141923;border:1px solid #393d47;border-radius:6px;padding:8px;margin:5px 0}
 .locked{opacity:.45}
 .realm-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px}
-.notice{position:fixed;right:16px;bottom:16px;z-index:30;background:#171d28;border:1px solid #b39b58;padding:10px 14px;border-radius:6px;opacity:0;pointer-events:none;transition:.25s;max-width:280px;font-size:13px}
+.notice{position:fixed;right:16px;bottom:16px;background:#171d28;border:1px solid #b39b58;padding:10px 14px;border-radius:6px;opacity:0;transition:.25s;z-index:50}
 .notice.show{opacity:1}
-.prestige{border-color:#806c36;background:linear-gradient(135deg,#181923,#17130e)}
 .chaos{border-color:#6b2d8a;background:linear-gradient(135deg,#1a1020,#120a18)}
-.law{border-color:#2d6b8a}
-.title{border-color:#8a6b2d}
 .equip-btn{background:#38462b;border-color:#5c7841}
 .unequip-btn{background:#462b2b;border-color:#784141}
-textarea{width:100%;background:#080b10;color:#eee7d2;border:1px solid #30343c;border-radius:5px;padding:8px;font-family:monospace;font-size:11px;resize:vertical;min-height:70px;margin:5px 0}
-input[type=number]{width:100%;padding:6px;border-radius:4px;border:1px solid #66552d;background:#171d29;color:#eee7d2;font-size:14px;margin:6px 0}
+textarea{width:100%;background:#080b10;color:#eee7d2;border:1px solid #30343c;border-radius:5px;padding:8px;font-family:monospace;font-size:11px;min-height:70px;margin:5px 0}
+input[type=number]{width:100%;padding:6px;border-radius:4px;border:1px solid #66552d;background:#171d29;color:#eee7d2;margin:6px 0}
 @media(max-width:1100px){main{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <header>
     <h1>☯ PATH OF THE IMMORTAL ☯</h1>
-    <div class="subtitle">Restored + Rebalanced Edition</div>
+    <div class="subtitle">Functional Edition</div>
 </header>
+
 <main>
 <!-- LEFT -->
 <section class="panel">
-<h2>☯ Cultivator</h2>
-<div class="card">
-    <div class="stat"><span>Name</span><strong>Wandering Disciple</strong></div>
-    <div class="stat"><span>Realm</span><strong id="realm">Mortal</strong></div>
-    <div class="stat"><span>Path</span><strong id="currentPath">None</strong></div>
-    <div class="stat"><span>Level</span><strong id="level">1</strong></div>
-</div>
-<div class="stat"><span>HP</span><span id="hpText"></span></div>
-<div class="bar"><div id="hpBar" class="fill hp"></div></div>
-<div class="stat"><span>Cultivation</span><span id="cultText"></span></div>
-<div class="bar"><div id="cultBar" class="fill cult"></div></div>
-<div class="stat"><span>Karma</span><span id="karmaText"></span></div>
-<div class="bar"><div id="karmaBar" class="fill karma"></div></div>
-<div class="card">
-    <div class="stat"><span>⚔ Attack</span><strong id="atk"></strong></div>
-    <div class="stat"><span>🛡 Defense</span><strong id="def"></strong></div>
-    <div class="stat"><span>💠 Stones</span><strong id="stones"></strong></div>
-    <div class="stat"><span>☯ Power</span><strong id="power"></strong></div>
-</div>
-<button class="full" onclick="meditate()">🧘 Meditate</button>
-<button class="full" onclick="deepMeditate()">🌌 Deep Meditation</button>
-<button class="full" onclick="breakthrough()">☯ Breakthrough</button>
-<button class="full" onclick="heal()">🌿 Heal</button>
-<button class="full" onclick="reincarnate()">☯ Reincarnate</button>
-<button class="full" onclick="saveGame()">💾 Save</button>
+    <h2>☯ Cultivator</h2>
+    <div class="card">
+        <div class="stat"><span>Realm</span><strong id="realm">Mortal</strong></div>
+        <div class="stat"><span>Path</span><strong id="currentPath">None</strong></div>
+        <div class="stat"><span>Level</span><strong id="level">1</strong></div>
+    </div>
+    <div class="stat"><span>HP</span><span id="hpText">100 / 100</span></div>
+    <div class="bar"><div id="hpBar" class="fill hp" style="width:100%"></div></div>
+    <div class="stat"><span>Cultivation</span><span id="cultText">0 / 100</span></div>
+    <div class="bar"><div id="cultBar" class="fill cult" style="width:0%"></div></div>
+    <div class="card">
+        <div class="stat"><span>⚔ Attack</span><strong id="atk">10</strong></div>
+        <div class="stat"><span>🛡 Defense</span><strong id="def">5</strong></div>
+        <div class="stat"><span>💠 Stones</span><strong id="stones">100</strong></div>
+        <div class="stat"><span>☯ Power</span><strong id="power">×1</strong></div>
+    </div>
+    <button class="full" onclick="meditate()">🧘 Meditate</button>
+    <button class="full" onclick="deepMeditate()">🌌 Deep Meditation</button>
+    <button class="full" onclick="breakthrough()">☯ Breakthrough</button>
+    <button class="full" onclick="heal()">🌿 Heal</button>
+    <button class="full" id="reincarnateBtn" onclick="reincarnate()">☯ Reincarnate</button>
+    <button class="full" onclick="saveGame()">💾 Save</button>
 </section>
 
 <!-- CENTER -->
 <section class="panel">
-<div class="tabs">
-    <button class="tab" onclick="showTab('cultivation')">Cultivation</button>
-    <button class="tab" onclick="showTab('weapons')">Weapons</button>
-    <button class="tab" onclick="showTab('techniques')">Techniques</button>
-    <button class="tab" onclick="showTab('combat')">Combat</button>
-    <button class="tab" onclick="showTab('explore')">Explore</button>
-    <button class="tab" onclick="showTab('dao')">Dao Laws</button>
-    <button class="tab" onclick="showTab('relics')">Relics</button>
-    <button class="tab" onclick="showTab('titles')">Titles</button>
-    <button class="tab" onclick="showTab('sect')">Sect</button>
-    <button class="tab" onclick="showTab('inventory')">Inventory</button>
-    <button class="tab" onclick="showTab('reincarnation')">Reincarnation</button>
-    <button class="tab" onclick="showTab('save')">Save</button>
-</div>
-
-<!-- CULTIVATION -->
-<div id="cultivation">
-<div class="card">
-    <strong>Spiritual Refining</strong>
-    <input type="number" id="spiritStoneInput" min="1" placeholder="Enter Spirit Stones amount">
-    <button class="full" onclick="convertCustomStones()">Convert → Cultivation</button>
-</div>
-<div class="card">
-    <div class="stat"><span>Generation</span><strong id="cultRate"></strong></div>
-    <div class="stat"><span>Next Realm</span><strong id="nextReq"></strong></div>
-</div>
-<div class="card">
-    <div class="grid">
-        <button onclick="upgrade('atk')">Train ATK<br>💠 <span id="atkCost"></span></button>
-        <button onclick="upgrade('def')">Train DEF<br>💠 <span id="defCost"></span></button>
+    <div class="tabs">
+        <button class="tab" onclick="showTab('cultivation')">Cultivation</button>
+        <button class="tab" onclick="showTab('weapons')">Weapons</button>
+        <button class="tab" onclick="showTab('techniques')">Techniques</button>
+        <button class="tab" onclick="showTab('combat')">Combat</button>
+        <button class="tab" onclick="showTab('explore')">Explore</button>
+        <button class="tab" onclick="showTab('dao')">Dao Laws</button>
+        <button class="tab" onclick="showTab('relics')">Relics</button>
+        <button class="tab" onclick="showTab('titles')">Titles</button>
+        <button class="tab" onclick="showTab('sect')">Sect</button>
+        <button class="tab" onclick="showTab('inventory')">Inventory</button>
+        <button class="tab" id="reincTabBtn" onclick="showTab('reincarnation')">Reincarnation</button>
+        <button class="tab" onclick="showTab('save')">Save</button>
     </div>
-</div>
-<div class="card"><strong>Realm Progression</strong><div id="realmList"></div></div>
-</div>
 
-<!-- WEAPONS (restored) -->
-<div id="weapons" class="hidden">
-    <h2>⚔ Armory</h2>
-    <div class="card"><div class="stat"><span>Weapon Mastery</span><strong id="masteryBonus"></strong></div></div>
-    <div id="weaponList"></div>
-</div>
-
-<!-- TECHNIQUES (restored) -->
-<div id="techniques" class="hidden">
-    <h2>📜 Techniques</h2>
-    <div id="techList"></div>
-</div>
-
-<!-- COMBAT -->
-<div id="combat" class="hidden">
-<div id="enemyArea"><div class="card">No enemy</div></div>
-<div id="combatControls" class="hidden">
-    <div class="grid">
-        <button onclick="playerAttack()">⚔ Attack</button>
-        <button onclick="defend()">🛡 Defend</button>
-        <button onclick="useFusion()">🔥 Fusion</button>
+    <!-- Cultivation -->
+    <div id="cultivation">
+        <div class="card">
+            <strong>Spiritual Refining</strong>
+            <input type="number" id="spiritStoneInput" min="1" placeholder="Amount of Spirit Stones">
+            <button class="full" onclick="convertCustomStones()">Convert → Cultivation</button>
+        </div>
+        <div class="card">
+            <div class="stat"><span>Generation</span><strong id="cultRate">0.8/s</strong></div>
+            <div class="stat"><span>Next Realm</span><strong id="nextReq">100</strong></div>
+        </div>
+        <div class="card">
+            <div class="grid">
+                <button onclick="upgrade('atk')">Train ATK<br>💠 <span id="atkCost">50</span></button>
+                <button onclick="upgrade('def')">Train DEF<br>💠 <span id="defCost">60</span></button>
+            </div>
+        </div>
+        <div class="card"><strong>Realm Progression</strong><div id="realmList"></div></div>
     </div>
-    <div id="combatTechniques"></div>
-</div>
-<div id="log" class="log"></div>
-</div>
 
-<!-- EXPLORE (restored classic + Infinite Chaos) -->
-<div id="explore" class="hidden">
-<div id="areas"></div>
-<div class="card" id="worldEventCard" style="display:none">
-    <strong id="worldEventTitle">World Event</strong>
-    <p class="small" id="worldEventDesc"></p>
-    <button onclick="resolveWorldEvent()">Face Event</button>
-</div>
-</div>
-
-<!-- DAO -->
-<div id="dao" class="hidden">
-<h2>📜 Dao Comprehension</h2>
-<p class="small">Master all 5 laws to unlock the Unknown Realm</p>
-<div id="lawList"></div>
-</div>
-
-<!-- RELICS -->
-<div id="relics" class="hidden">
-<h2>🔮 Chaos Relics</h2>
-<div id="relicList"></div>
-</div>
-
-<!-- TITLES -->
-<div id="titles" class="hidden">
-<h2>👑 Soulbound Titles</h2>
-<p class="small">Equip up to 3</p>
-<div id="titleList"></div>
-</div>
-
-<!-- SECT -->
-<div id="sect" class="hidden">
-<h2>🏯 Your Sect</h2>
-<div class="card">
-    <div class="stat"><span>Sect Name</span><strong id="sectName">None</strong></div>
-    <div class="stat"><span>Disciples</span><strong id="discipleCount">0</strong></div>
-    <div class="stat"><span>Passive Gain</span><strong id="sectGain">0</strong></div>
-</div>
-<button class="full" onclick="foundSect()">Found Sect</button>
-<button class="full" onclick="recruitDisciple()">Recruit Disciple</button>
-</div>
-
-<!-- INVENTORY (restored) -->
-<div id="inventory" class="hidden">
-    <h2>🎒 Inventory & Artifacts</h2>
-    <div id="inventoryList"></div>
-</div>
-
-<!-- REINCARNATION -->
-<div id="reincarnation" class="hidden">
-<div class="card prestige">
-    <div class="stat"><span>Reincarnations</span><strong id="reincarnationCount"></strong></div>
-    <div class="stat"><span>Permanent Power</span><strong id="prestigeBonus"></strong></div>
-</div>
-<div class="card">
-    <p class="small">Gain = floor(Cultivation / 15,000,000). Requires Unknown Realm.</p>
-    <button class="full" onclick="reincarnate()">☯ Reincarnate</button>
-</div>
-<div class="card">
-    <strong>Choose Immortal Path</strong>
-    <p class="small">Available from Qi Gathering onward</p>
-    <div class="grid">
-        <button onclick="choosePath('slaughter')">Slaughter</button>
-        <button onclick="choosePath('alchemy')">Alchemy</button>
-        <button onclick="choosePath('formation')">Formation</button>
-        <button onclick="choosePath('chaos')">Chaos</button>
+    <!-- Weapons -->
+    <div id="weapons" class="hidden">
+        <h2>⚔ Armory</h2>
+        <div class="card"><div class="stat"><span>Weapon Mastery</span><strong id="masteryBonus">+0%</strong></div></div>
+        <div id="weaponList"></div>
     </div>
-</div>
-</div>
 
-<!-- SAVE -->
-<div id="save" class="hidden">
-<button class="full" onclick="saveGame()">💾 Save Now</button>
-<button class="full" onclick="exportSaveCode()">📤 Export Code</button>
-<div id="exportArea" class="hidden">
-    <textarea id="exportCodeText" readonly></textarea>
-    <button onclick="copyExportCode()">Copy</button>
-</div>
-<textarea id="importCodeText" placeholder="Paste save code"></textarea>
-<button class="full" onclick="importSaveCode()">📥 Import</button>
-</div>
+    <!-- Techniques -->
+    <div id="techniques" class="hidden">
+        <h2>📜 Techniques</h2>
+        <div id="techList"></div>
+    </div>
+
+    <!-- Combat -->
+    <div id="combat" class="hidden">
+        <div id="enemyArea"><div class="card">No enemy</div></div>
+        <div id="combatControls" class="hidden">
+            <div class="grid">
+                <button onclick="playerAttack()">⚔ Attack</button>
+                <button onclick="defend()">🛡 Defend</button>
+                <button onclick="useFusion()">🔥 Fusion</button>
+            </div>
+            <div id="combatTechniques"></div>
+        </div>
+        <div id="log" class="log"></div>
+    </div>
+
+    <!-- Explore -->
+    <div id="explore" class="hidden">
+        <div id="areas"></div>
+    </div>
+
+    <!-- Dao -->
+    <div id="dao" class="hidden">
+        <h2>📜 Dao Comprehension</h2>
+        <div id="lawList"></div>
+    </div>
+
+    <!-- Relics -->
+    <div id="relics" class="hidden">
+        <h2>🔮 Chaos Relics</h2>
+        <div id="relicList"></div>
+    </div>
+
+    <!-- Titles -->
+    <div id="titles" class="hidden">
+        <h2>👑 Titles</h2>
+        <div id="titleList"></div>
+    </div>
+
+    <!-- Sect -->
+    <div id="sect" class="hidden">
+        <h2>🏯 Sect</h2>
+        <div class="card">
+            <div class="stat"><span>Name</span><strong id="sectName">None</strong></div>
+            <div class="stat"><span>Disciples</span><strong id="discipleCount">0</strong></div>
+        </div>
+        <button class="full" onclick="foundSect()">Found Sect</button>
+        <button class="full" onclick="recruitDisciple()">Recruit Disciple</button>
+    </div>
+
+    <!-- Inventory -->
+    <div id="inventory" class="hidden">
+        <h2>🎒 Inventory</h2>
+        <div id="inventoryList"></div>
+    </div>
+
+    <!-- Reincarnation -->
+    <div id="reincarnation" class="hidden">
+        <div class="card">
+            <div class="stat"><span>Reincarnations</span><strong id="reincarnationCount">0</strong></div>
+            <div class="stat"><span>Power</span><strong id="prestigeBonus">×1</strong></div>
+        </div>
+        <div class="card">
+            <p class="small">Gain = floor(Cultivation / 15,000,000)</p>
+            <button class="full" onclick="reincarnate()">☯ Reincarnate</button>
+        </div>
+        <div class="card">
+            <strong>Immortal Path</strong>
+            <div class="grid">
+                <button onclick="choosePath('slaughter')">Slaughter</button>
+                <button onclick="choosePath('alchemy')">Alchemy</button>
+                <button onclick="choosePath('formation')">Formation</button>
+                <button onclick="choosePath('chaos')">Chaos</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save -->
+    <div id="save" class="hidden">
+        <button class="full" onclick="saveGame()">💾 Save Now</button>
+        <button class="full" onclick="exportSaveCode()">📤 Export</button>
+        <div id="exportArea" class="hidden">
+            <textarea id="exportCodeText" readonly></textarea>
+            <button onclick="copyExportCode()">Copy</button>
+        </div>
+        <textarea id="importCodeText" placeholder="Paste save code"></textarea>
+        <button class="full" onclick="importSaveCode()">📥 Import</button>
+    </div>
 </section>
 
 <!-- RIGHT -->
 <section class="panel">
-<h2>☯ Journal</h2>
-<div class="card"><strong>Power</strong><p id="powerSummary"></p></div>
-<div class="card"><strong>Current Path</strong><p id="pathDesc">A nameless mortal.</p></div>
-<div class="card" id="chaosPanel" style="display:none">
-    <strong>🌌 Infinite Chaos</strong>
-    <div class="stat"><span>Stage</span><strong id="chaosStage">0</strong></div>
-    <div class="stat"><span>Highest</span><strong id="chaosHighest">0</strong></div>
-</div>
-<div class="card">
-    <strong>Active Titles</strong>
-    <div id="activeTitles">None</div>
-</div>
-<div class="small">
-    <p>• Meditate & convert stones</p>
-    <p>• Explore areas</p>
-    <p>• Master all 5 Dao Laws → Unknown Realm</p>
-    <p>• Collect Relics & Titles</p>
-    <p>• Build your Sect (no requirements)</p>
-    <p>• Reincarnate forever</p>
-</div>
+    <h2>☯ Journal</h2>
+    <div class="card"><strong>Power</strong><p id="powerSummary">×1</p></div>
+    <div class="card"><strong>Path</strong><p id="pathDesc">A nameless mortal.</p></div>
+    <div class="card" id="chaosPanel" style="display:none">
+        <strong>🌌 Infinite Chaos</strong>
+        <div class="stat"><span>Stage</span><strong id="chaosStage">0</strong></div>
+        <div class="stat"><span>Highest</span><strong id="chaosHighest">0</strong></div>
+    </div>
+    <div class="card"><strong>Active Titles</strong><div id="activeTitles">None</div></div>
+    <div class="small" id="guidanceList"></div>
 </section>
 </main>
+
 <div id="notice" class="notice"></div>
 
 <script>
 "use strict";
 
-/* =========================================================
-   LOGARITHMIC NUMBER
-========================================================= */
+// ===== Log Number =====
 class LogNum {
     constructor(l = -Infinity) { this.l = (typeof l === "number" && isFinite(l)) ? l : -Infinity; }
     static from(n) {
@@ -297,9 +270,7 @@ class LogNum {
     }
 }
 
-/* =========================================================
-   DATA
-========================================================= */
+// ===== Data =====
 const normalRealms = [
     {name:"Mortal",req:100,mult:1},
     {name:"Qi Gathering",req:500,mult:1.7},
@@ -341,112 +312,87 @@ const areas = [
 ];
 
 const techniques = [
-    {name:"Breathing Technique",quality:"Common",req:0,cost:0,desc:"+20% Cultivation",passive:"cult"},
-    {name:"Iron Body",quality:"Common",req:1,cost:80,desc:"+25% Defense",passive:"def"},
-    {name:"Mountain Fist",quality:"Uncommon",req:1,cost:120,desc:"1.8× Attack",skill:1.8},
-    {name:"Azure Sword",quality:"Rare",req:2,cost:400,desc:"2.5× Attack",skill:2.5},
-    {name:"Flame Palm",quality:"Rare",req:3,cost:900,desc:"3× Attack + burn",skill:3,burn:true},
-    {name:"Soul Severing",quality:"Epic",req:5,cost:4000,desc:"4.5× Attack",skill:4.5},
-    {name:"Void Annihilation",quality:"Legendary",req:7,cost:15000,desc:"7× Attack",skill:7}
+    {name:"Breathing Technique",req:0,cost:0,desc:"+20% Cultivation",passive:true},
+    {name:"Iron Body",req:1,cost:80,desc:"+25% Defense",passive:true},
+    {name:"Mountain Fist",req:1,cost:120,desc:"1.8× Attack",skill:1.8},
+    {name:"Azure Sword",req:2,cost:400,desc:"2.5× Attack",skill:2.5},
+    {name:"Flame Palm",req:3,cost:900,desc:"3× Attack",skill:3},
+    {name:"Soul Severing",req:5,cost:4000,desc:"4.5× Attack",skill:4.5},
+    {name:"Void Annihilation",req:7,cost:15000,desc:"7× Attack",skill:7}
 ];
 
 const weaponsData = [
-    {name:"Wooden Sword",quality:"Common",atk:5,cost:50,req:0},
-    {name:"Iron Sword",quality:"Common",atk:18,cost:250,req:1},
-    {name:"Jade Sword",quality:"Uncommon",atk:50,cost:850,req:2},
-    {name:"Azure Blade",quality:"Rare",atk:140,cost:3200,req:3},
-    {name:"Crimson Demon Saber",quality:"Rare",atk:380,cost:11000,req:4},
-    {name:"Thunder Spear",quality:"Epic",atk:1100,cost:48000,req:5},
-    {name:"Heaven Sword",quality:"Epic",atk:3200,cost:160000,req:6},
-    {name:"Void Blade",quality:"Legendary",atk:12000,cost:650000,req:7},
-    {name:"Immortal Emperor Weapon",quality:"Mythic",atk:45000,cost:2500000,req:8,soulbound:true},
-    {name:"??? — Unknown Weapon",quality:"Transcendent",atk:0,cost:0,req:10,unknown:true,soulbound:true}
+    {name:"Wooden Sword",atk:5,cost:50,req:0},
+    {name:"Iron Sword",atk:18,cost:250,req:1},
+    {name:"Jade Sword",atk:50,cost:850,req:2},
+    {name:"Azure Blade",atk:140,cost:3200,req:3},
+    {name:"Crimson Demon Saber",atk:380,cost:11000,req:4},
+    {name:"Thunder Spear",atk:1100,cost:48000,req:5},
+    {name:"Heaven Sword",atk:3200,cost:160000,req:6},
+    {name:"Void Blade",atk:12000,cost:650000,req:7},
+    {name:"Immortal Emperor",atk:45000,cost:2500000,req:8,soulbound:true},
+    {name:"??? Unknown Weapon",atk:0,cost:0,req:10,unknown:true,soulbound:true}
 ];
 
 const artifacts = [
-    {name:"Jade Spirit Ring",desc:"+15% Cultivation generation"},
+    {name:"Jade Spirit Ring",desc:"+15% Cultivation"},
     {name:"Iron Guardian Talisman",desc:"+20 Defense"},
     {name:"Heavenly Sword Fragment",desc:"+30 Attack"},
-    {name:"Phoenix Feather",desc:"+10% maximum HP"}
+    {name:"Phoenix Feather",desc:"+10% Max HP"}
 ];
 
 const laws = [
-    {id:"time",name:"Law of Time",desc:"+25% Cultivation speed",cost:5},
+    {id:"time",name:"Law of Time",desc:"+25% Cultivation",cost:5},
     {id:"space",name:"Law of Space",desc:"+20% Attack",cost:5},
     {id:"life",name:"Law of Life",desc:"+30% Max HP",cost:5},
-    {id:"death",name:"Law of Death",desc:"+15% Critical chance",cost:8},
+    {id:"death",name:"Law of Death",desc:"+15% Crit",cost:8},
     {id:"chaos",name:"Law of Chaos",desc:"+40% Chaos rewards",cost:10}
 ];
 
 const possibleRelics = [
     {id:"chaos_core",name:"Chaos Core",desc:"+50% Chaos damage"},
     {id:"eternity_shard",name:"Eternity Shard",desc:"+1 Reincarnation gain"},
-    {id:"void_heart",name:"Void Heart",desc:"Ignore 20% enemy defense"},
+    {id:"void_heart",name:"Void Heart",desc:"Ignore 20% defense"},
     {id:"origin_seed",name:"Origin Seed",desc:"+100% Cultivation in Unknown"}
 ];
 
 const possibleTitles = [
-    {id:"reincarnator",name:"Eternal Reincarnator",req:"reinc",desc:"+10% all power",threshold:100},
-    {id:"chaos_walker",name:"Chaos Walker",req:"chaos",desc:"+25% Chaos rewards",threshold:50},
-    {id:"law_master",name:"Law Master",req:"laws",desc:"+15% Law effect",threshold:5},
-    {id:"sect_leader",name:"Sect Leader",req:"disciples",desc:"+20% Sect gain",threshold:10}
+    {id:"reincarnator",name:"Eternal Reincarnator",req:"reinc",threshold:100,desc:"+10% power"},
+    {id:"chaos_walker",name:"Chaos Walker",req:"chaos",threshold:50,desc:"+25% Chaos rewards"},
+    {id:"law_master",name:"Law Master",req:"laws",threshold:5,desc:"+15% Law effect"},
+    {id:"sect_leader",name:"Sect Leader",req:"disciples",threshold:10,desc:"+20% Sect gain"}
 ];
 
 const defaultGame = {
-    realm:0,level:1,cultivation:0,xp:0,stones:100,
-    baseAtk:10,baseDef:5,hp:100,maxHp:100,
-    techniques:[0],equipment:[],weapons:[],equippedWeapon:null,
-    weaponMastery:0,reincarnations:0,unknownUnlocked:false,
-    chaosStage:0,chaosHighest:0,
-    karma:0,path:null,
-    laws:[],relics:[],titles:[],activeTitles:[],
-    sectName:null,disciples:0,
-    fusionActive:false,fusionTimer:0,
-    worldEvent:null,
-    lastSave:Date.now(),combat:false,enemy:null,defending:false
+    realm:0, level:1, cultivation:0, xp:0, stones:100,
+    baseAtk:10, baseDef:5, hp:100, maxHp:100,
+    techniques:[0], equipment:[], weapons:[], equippedWeapon:null,
+    weaponMastery:0, reincarnations:0, unknownUnlocked:false,
+    chaosStage:0, chaosHighest:0,
+    karma:0, path:null,
+    laws:[], relics:[], titles:[], activeTitles:[],
+    sectName:null, disciples:0,
+    fusionActive:false, fusionTimer:0,
+    lastSave:Date.now(), combat:false, enemy:null, defending:false
 };
 
 let game = structuredClone(defaultGame);
 
-/* =========================================================
-   CORE
-========================================================= */
+// ===== Core =====
 function prestige() { return new LogNum(Math.log10(game.reincarnations + 1)); }
 function mastery() { return LogNum.from(1 + game.weaponMastery * 0.05); }
-function lawBonus(type) {
-    let b = 1;
-    if (game.laws.includes("time") && type === "cult") b *= 1.25;
-    if (game.laws.includes("space") && type === "atk") b *= 1.20;
-    if (game.laws.includes("life") && type === "hp") b *= 1.30;
-    if (game.laws.includes("chaos") && type === "chaos") b *= 1.40;
-    return b;
-}
-function titleBonus() {
-    let m = 1;
-    if (game.activeTitles.includes("reincarnator")) m *= 1.10;
-    if (game.activeTitles.includes("chaos_walker")) m *= 1.05;
-    if (game.activeTitles.includes("law_master")) m *= 1.15;
-    return m;
-}
-function pathBonus() {
-    if (game.path === "slaughter") return 1.30;
-    if (game.path === "alchemy") return 1.25;
-    if (game.path === "formation") return 1.20;
-    if (game.path === "chaos") return 1.50;
-    return 1;
-}
 function realmMult() {
     let base = game.unknownUnlocked
         ? new LogNum(Math.log10(180) + Math.log10(Math.max(1, Math.log10(game.cultivation + 10)))).mul(prestige())
         : LogNum.from(normalRealms[game.realm].mult).mul(prestige());
-    return base.mul(titleBonus()).mul(pathBonus());
+    return base;
 }
 function totalAtk() {
-    let t = LogNum.from(game.baseAtk).mul(realmMult()).mul(mastery()).mul(lawBonus("atk"));
+    let t = LogNum.from(game.baseAtk).mul(realmMult()).mul(mastery());
     if (game.equippedWeapon !== null) {
         const w = weaponsData[game.equippedWeapon];
-        if (w && w.unknown) t = t.add(new LogNum(0.45 * Math.log10(Math.max(1, game.cultivation))).mul(150).mul(prestige()));
-        else if (w) t = t.add(LogNum.from(w.atk).mul(realmMult()).mul(mastery()));
+        if (w.unknown) t = t.add(new LogNum(0.45 * Math.log10(Math.max(1, game.cultivation))).mul(150).mul(prestige()));
+        else t = t.add(LogNum.from(w.atk).mul(realmMult()).mul(mastery()));
     }
     if (game.equipment.includes("Heavenly Sword Fragment")) t = t.add(30);
     if (game.fusionActive) t = t.mul(2.5);
@@ -456,66 +402,72 @@ function totalDef() {
     let d = LogNum.from(game.baseDef).mul(realmMult());
     if (game.techniques.includes(1)) d = d.mul(1.25);
     if (game.equipment.includes("Iron Guardian Talisman")) d = d.add(20);
-    if (game.laws.includes("life")) d = d.mul(1.1);
     return d;
 }
 function cultRate() {
-    let r = LogNum.from(0.8).mul(realmMult()).mul(lawBonus("cult"));
-    if (game.techniques.includes(0)) r = r.mul(1.20);
+    let r = LogNum.from(0.8).mul(realmMult());
+    if (game.techniques.includes(0)) r = r.mul(1.2);
     if (game.equipment.includes("Jade Spirit Ring")) r = r.mul(1.15);
     if (game.disciples > 0) r = r.mul(1 + game.disciples * 0.03);
-    r = r.mul(game.reincarnations + 1);
-    return r;
+    return r.mul(game.reincarnations + 1);
 }
 function format(v) { return (v instanceof LogNum) ? v.format() : LogNum.from(v).format(); }
 
 function notify(t) {
     const n = document.getElementById("notice");
-    n.textContent = t; n.classList.add("show");
+    n.textContent = t;
+    n.classList.add("show");
     setTimeout(() => n.classList.remove("show"), 2000);
 }
 function log(t, c = "") {
     const b = document.getElementById("log");
     const d = document.createElement("div");
-    d.className = c; d.textContent = t;
-    b.appendChild(d); b.scrollTop = b.scrollHeight;
+    d.className = c;
+    d.textContent = t;
+    b.appendChild(d);
+    b.scrollTop = b.scrollHeight;
 }
-function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a}
-function chance(p){return Math.random()<p}
+function rand(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
+function chance(p) { return Math.random() < p; }
 
-/* =========================================================
-   UPDATE
-========================================================= */
+// ===== Update =====
 function update() {
+    const canSeeReinc = game.realm === normalRealms.length - 1 && game.cultivation >= normalRealms[normalRealms.length - 1].req;
+
     document.getElementById("realm").textContent = game.unknownUnlocked ? "??? — Unknown Realm" : normalRealms[game.realm].name;
     document.getElementById("level").textContent = game.level;
-    document.getElementById("currentPath").textContent = game.path ? game.path.charAt(0).toUpperCase() + game.path.slice(1) : "None";
-
+    document.getElementById("currentPath").textContent = game.path ? game.path : "None";
     document.getElementById("atk").textContent = totalAtk().format();
     document.getElementById("def").textContent = totalDef().format();
     document.getElementById("stones").textContent = format(game.stones);
-    document.getElementById("power").textContent = "×" + prestige().format();
+    document.getElementById("power").textContent = canSeeReinc ? "×" + prestige().format() : "???";
 
     document.getElementById("hpText").textContent = format(game.hp) + (game.unknownUnlocked ? " / ∞" : " / " + format(game.maxHp));
     document.getElementById("hpBar").style.width = game.unknownUnlocked ? "100%" : Math.min(100, game.hp / game.maxHp * 100) + "%";
     document.getElementById("cultText").textContent = format(game.cultivation) + (game.unknownUnlocked ? " / ∞" : " / " + format(normalRealms[game.realm].req));
     document.getElementById("cultBar").style.width = game.unknownUnlocked ? "100%" : Math.min(100, game.cultivation / normalRealms[game.realm].req * 100) + "%";
 
-    document.getElementById("karmaText").textContent = game.karma;
-    document.getElementById("karmaBar").style.width = Math.min(100, Math.abs(game.karma) / 100) + "%";
-    document.getElementById("karmaBar").style.background = game.karma >= 0 ? "#7dca8b" : "#dc7272";
-
     document.getElementById("cultRate").textContent = cultRate().format() + "/s";
-    document.getElementById("nextReq").textContent = game.unknownUnlocked ? "∞" : (normalRealms[game.realm+1] ? format(normalRealms[game.realm+1].req) : "Master all Laws");
+    document.getElementById("nextReq").textContent = game.unknownUnlocked ? "∞" : (normalRealms[game.realm + 1] ? format(normalRealms[game.realm + 1].req) : "Max Immortal Ascension");
     document.getElementById("atkCost").textContent = format(upgradeCost("atk"));
     document.getElementById("defCost").textContent = format(upgradeCost("def"));
     document.getElementById("masteryBonus").textContent = `+${game.weaponMastery * 5}%`;
 
-    document.getElementById("reincarnationCount").textContent = format(game.reincarnations);
-    document.getElementById("prestigeBonus").textContent = "×" + prestige().format();
-    document.getElementById("powerSummary").textContent = "×" + prestige().format() + " from " + format(game.reincarnations) + " reincarnations";
+    // Reincarnation visibility
+    document.getElementById("reincarnationCount").textContent = canSeeReinc ? format(game.reincarnations) : "???";
+    document.getElementById("prestigeBonus").textContent = canSeeReinc ? "×" + prestige().format() : "???";
+    document.getElementById("powerSummary").textContent = canSeeReinc ? "×" + prestige().format() + " from " + format(game.reincarnations) + " reincarnations" : "A greater path is still sealed...";
     document.getElementById("pathDesc").textContent = game.unknownUnlocked ? "Beyond the known Dao." : (game.reincarnations > 0 ? "A reincarnated cultivator." : "A nameless mortal.");
 
+    const reincBtn = document.getElementById("reincarnateBtn");
+    const reincTab = document.getElementById("reincTabBtn");
+    if (reincBtn) {
+        reincBtn.disabled = !canSeeReinc;
+        reincBtn.textContent = canSeeReinc ? "☯ Reincarnate" : "☯ Reincarnate (Max Immortal Ascension)";
+    }
+    if (reincTab) reincTab.style.display = canSeeReinc ? "" : "none";
+
+    // Chaos panel
     const cp = document.getElementById("chaosPanel");
     if (game.unknownUnlocked) {
         cp.style.display = "block";
@@ -525,8 +477,30 @@ function update() {
 
     document.getElementById("sectName").textContent = game.sectName || "None";
     document.getElementById("discipleCount").textContent = game.disciples;
-    document.getElementById("sectGain").textContent = (game.disciples * 3) + "%";
     document.getElementById("activeTitles").textContent = game.activeTitles.length ? game.activeTitles.join(", ") : "None";
+
+    // Guidance
+    const tips = [];
+    tips.push("• Meditate and convert Spirit Stones");
+    tips.push("• Explore areas and fight enemies");
+    tips.push("• Train Attack & Defense");
+    tips.push("• Buy weapons and learn techniques");
+    if (game.realm >= 1 || game.unknownUnlocked) {
+        tips.push("• Choose an Immortal Path");
+        tips.push("• Use Fusion in combat");
+    }
+    if (game.reincarnations >= 1) {
+        tips.push("• Comprehend Dao Laws");
+        tips.push("• Master all 5 Laws to open Unknown Realm");
+    }
+    if (canSeeReinc) {
+        tips.push("• Reincarnate for permanent power");
+    }
+    if (game.unknownUnlocked) {
+        tips.push("• Enter Infinite Chaos");
+        tips.push("• Advance stages for Relics");
+    }
+    document.getElementById("guidanceList").innerHTML = tips.map(t => `<p>${t}</p>`).join("");
 
     renderRealms();
     renderWeapons();
@@ -538,101 +512,89 @@ function update() {
     renderAreas();
     renderEnemy();
     checkTitles();
-    maybeWorldEvent();
 }
 
 function upgradeCost(stat) {
-    const b = stat === "atk" ? 50 : 60;
-    const v = stat === "atk" ? game.baseAtk : game.baseDef;
-    return Math.floor(b * Math.pow(v / (stat === "atk" ? 10 : 5), 1.35));
+    const base = stat === "atk" ? 50 : 60;
+    const val = stat === "atk" ? game.baseAtk : game.baseDef;
+    return Math.floor(base * Math.pow(val / (stat === "atk" ? 10 : 5), 1.35));
 }
 
-/* =========================================================
-   ACTIONS
-========================================================= */
+// ===== Actions =====
 function convertCustomStones() {
-    const input = document.getElementById("spiritStoneInput");
-    let amount = parseInt(input.value);
-    if (isNaN(amount) || amount <= 0) { notify("Enter a valid number"); return; }
-    if (amount > game.stones) { notify("Not enough stones"); return; }
+    const amount = parseInt(document.getElementById("spiritStoneInput").value);
+    if (isNaN(amount) || amount <= 0) return notify("Enter a valid number");
+    if (amount > game.stones) return notify("Not enough stones");
     game.stones -= amount;
     game.cultivation += amount;
-    game.karma += 1;
-    input.value = "";
+    document.getElementById("spiritStoneInput").value = "";
     notify("Converted " + amount);
     update();
 }
 
 function meditate() {
-    const gain = Math.max(5, Math.pow(10, Math.min(cultRate().l, 8)));
-    const scaled = gain * (game.reincarnations + 1);
-    game.cultivation += scaled;
-    game.karma += 0.5;
-    notify("+" + format(scaled));
+    const gain = Math.max(5, Math.pow(10, Math.min(cultRate().l, 8))) * (game.reincarnations + 1);
+    game.cultivation += gain;
+    notify("+" + format(gain));
     update();
 }
 
 function deepMeditate() {
-    // No realm requirement
-    const depth = rand(5, 30);
-    const gain = Math.pow(10, Math.min(cultRate().l + depth / 10, 15));
+    const gain = Math.pow(10, Math.min(cultRate().l + 2, 14));
     game.cultivation += gain;
-    if (chance(0.15)) {
-        game.karma -= 10;
+    if (chance(0.12)) {
+        game.karma -= 8;
         notify("Qi deviation!");
     } else {
-        game.karma += 5;
         notify("Deep meditation +" + format(gain));
     }
     update();
 }
 
 function breakthrough() {
-    if (game.unknownUnlocked) { notify("No finite breakthroughs left"); return; }
+    if (game.unknownUnlocked) return notify("No more finite breakthroughs");
     const req = normalRealms[game.realm].req;
 
-    // Unknown Realm now requires all 5 laws
     if (game.realm === normalRealms.length - 1) {
-        if (game.cultivation < req) { notify("Immortal Ascension not maxed"); return; }
-        if (game.laws.length < 5) { notify("Master all 5 Dao Laws first"); return; }
+    if (game.cultivation < req) return notify("Not maxed");
+    if (game.laws.length < 5) return notify("Master all 5 Dao Laws first");
 
-        game.unknownUnlocked = true;
-        game.cultivation = 1;
-        game.maxHp *= 10;
-        game.hp = game.maxHp;
-        game.baseAtk *= 5;
-        game.baseDef *= 5;
-        if (!game.weapons.includes(9)) {
-            game.weapons.push(9);
-            game.weaponMastery = Math.max(game.weaponMastery, 9);
-            game.equippedWeapon = 9;
-        }
-        log("The Unknown Realm opens!", "mythic");
-        notify("Unknown Realm unlocked!");
-        update();
-        return;
+    const leftover = Math.max(0, game.cultivation - req);
+
+    game.unknownUnlocked = true;
+    game.cultivation = Math.max(1, leftover);   // keep leftover cultivation
+    game.maxHp *= 10;
+    game.hp = game.maxHp;
+    game.baseAtk *= 5;
+    game.baseDef *= 5;
+
+    if (!game.weapons.includes(9)) {
+        game.weapons.push(9);
+        game.weaponMastery = Math.max(game.weaponMastery, 9);
+        game.equippedWeapon = 9;
     }
 
-    if (game.cultivation < req) { notify("Not enough cultivation"); return; }
-    if (game.karma < -20 && chance(0.4)) {
-        game.hp = Math.max(1, game.hp * 0.4);
-        game.cultivation *= 0.6;
-        log("Heavenly Tribulation!", "bad");
-        game.karma += 15;
-        update();
-        return;
-    }
-    if (chance(Math.min(0.9, 0.45 + game.realm * 0.04))) {
-        game.realm++;
-        game.cultivation = 0;
-        game.baseAtk *= 1.18;
-        game.baseDef *= 1.18;
-        game.maxHp *= 1.15;
-        game.hp = game.maxHp;
-        game.karma += 3;
-        log(normalRealms[game.realm].name, "good");
-        notify("Breakthrough success");
-    } else {
+    log("A greater path opens!", "mythic");
+    notify("Unknown Realm unlocked!" + (leftover > 0 ? ` (+${format(leftover)} leftover)` : ""));
+    update();
+    return;
+}
+
+    if (game.cultivation < req) return notify("Not enough cultivation");
+    if (chance(0.55 + game.realm * 0.03)) {
+    const req = normalRealms[game.realm].req;
+    const leftover = Math.max(0, game.cultivation - req);  // keep excess
+
+    game.realm++;
+    game.cultivation = leftover;        // carry over leftover cultivation
+    game.baseAtk *= 1.18;
+    game.baseDef *= 1.18;
+    game.maxHp *= 1.15;
+    game.hp = game.maxHp;
+
+    log(normalRealms[game.realm].name, "good");
+    notify("Breakthrough success" + (leftover > 0 ? ` (+${format(leftover)} leftover)` : ""));
+} else {
         game.cultivation *= 0.7;
         game.hp = Math.max(1, game.hp * 0.7);
         notify("Failed");
@@ -641,18 +603,21 @@ function breakthrough() {
 }
 
 function reincarnate() {
-    if (!game.unknownUnlocked) { notify("Reach Unknown Realm first"); return; }
+    const can = game.realm === normalRealms.length - 1 && game.cultivation >= normalRealms[normalRealms.length - 1].req;
+    if (!can) return notify("Maximize Immortal Ascension first");
+    if (!game.unknownUnlocked) return notify("Reach Unknown Realm first");
+
     const threshold = 15000000;
-    if (game.cultivation < threshold) { notify("Need at least 15M cultivation"); return; }
+    if (game.cultivation < threshold) return notify("Need at least 15M cultivation");
     const gained = Math.floor(game.cultivation / threshold);
     if (gained < 1) return;
-    const next = game.reincarnations + gained + (game.relics.includes("eternity_shard") ? 1 : 0);
 
+    const next = game.reincarnations + gained + (game.relics.includes("eternity_shard") ? 1 : 0);
     if (!confirm(`Gain +${gained} reincarnations?\n${format(game.reincarnations)} → ${format(next)}`)) return;
 
-    const keptW = game.weapons.filter(i => weaponsData[i] && weaponsData[i].soulbound);
-    const keptE = (game.equippedWeapon !== null && weaponsData[game.equippedWeapon] && weaponsData[game.equippedWeapon].soulbound) ? game.equippedWeapon : null;
-    const keptM = game.weaponMastery;
+    const keptWeapons = game.weapons.filter(i => weaponsData[i] && weaponsData[i].soulbound);
+    const keptEquip = (game.equippedWeapon !== null && weaponsData[game.equippedWeapon]?.soulbound) ? game.equippedWeapon : null;
+    const keptMastery = game.weaponMastery;
     const keptLaws = [...game.laws];
     const keptRelics = [...game.relics];
     const keptTitles = [...game.titles];
@@ -663,16 +628,18 @@ function reincarnate() {
 
     game.reincarnations = next;
     Object.assign(game, {
-        realm:0, level:1, cultivation:0, xp:0, stones:100,
-        baseAtk:10, baseDef:5, hp:100, maxHp:100,
-        techniques:[0], equipment:[],
-        weapons:keptW, equippedWeapon:keptE, weaponMastery:keptM,
-        laws:keptLaws, relics:keptRelics, titles:keptTitles, activeTitles:keptActive,
-        path:keptPath, sectName:keptSect, disciples:keptDisciples,
-        karma:0, fusionActive:false,
-        combat:false, enemy:null, defending:false, lastSave:Date.now()
+        realm: 0, level: 1, cultivation: 0, xp: 0, stones: 100,
+        baseAtk: 10, baseDef: 5, hp: 100, maxHp: 100,
+        techniques: [0], equipment: [],
+        weapons: keptWeapons, equippedWeapon: keptEquip, weaponMastery: keptMastery,
+        laws: keptLaws, relics: keptRelics, titles: keptTitles, activeTitles: keptActive,
+        path: keptPath, sectName: keptSect, disciples: keptDisciples,
+        karma: 0, fusionActive: false,
+        combat: false, enemy: null, defending: false,
+        lastSave: Date.now()
     });
-    log(`+${gained} → ${format(game.reincarnations)}`, "mythic");
+
+    log(`+${gained} reincarnations`, "mythic");
     notify("+" + gained);
     update();
     saveGame();
@@ -680,29 +647,26 @@ function reincarnate() {
 
 function upgrade(stat) {
     const c = upgradeCost(stat);
-    if (game.stones < c) return;
+    if (game.stones < c) return notify("Not enough stones");
     game.stones -= c;
     if (stat === "atk") game.baseAtk++; else game.baseDef++;
     update();
 }
 
 function heal() {
-    game.hp = game.maxHp * (game.unknownUnlocked ? 10 : 1);
+    game.hp = game.maxHp * (game.unknownUnlocked ? 5 : 1);
     notify("Restored");
     update();
 }
 
 function choosePath(p) {
-    // Available from Qi Gathering (realm >= 1)
-    if (game.realm < 1 && !game.unknownUnlocked) { notify("Reach Qi Gathering first"); return; }
+    if (game.realm < 1 && !game.unknownUnlocked) return notify("Reach Qi Gathering first");
     game.path = p;
-    notify("Path of " + p + " chosen");
+    notify("Path of " + p);
     update();
 }
 
-/* =========================================================
-   WEAPONS (restored)
-========================================================= */
+// ===== Weapons =====
 function renderWeapons() {
     const box = document.getElementById("weaponList");
     box.innerHTML = "";
@@ -711,14 +675,12 @@ function renderWeapons() {
         const owned = game.weapons.includes(i);
         const eq = game.equippedWeapon === i;
         const locked = !game.unknownUnlocked && game.realm < w.req;
-        let act = owned
+        let btn = owned
             ? (eq ? `<button class="unequip-btn" onclick="unequipWeapon()">Unequip</button>` : `<button class="equip-btn" onclick="equipWeapon(${i})">Equip</button>`)
-            : locked ? `<button disabled>🔒 ${normalRealms[w.req].name}</button>`
-                     : `<button onclick="buyWeapon(${i})">Buy 💠${format(w.cost)}</button>`;
-        box.innerHTML += `<div class="weapon-card ${locked&&!owned?"locked":""}" style="${eq?"border-color:#5c7841":""}">
-            <strong style="${w.soulbound?"color:#c471ed":""}">${w.name}${eq?" (Equipped)":""}</strong>
-            <div class="small">${w.quality} | ATK ${w.unknown?"Scaling":w.atk}</div>
-            ${act}
+            : locked ? `<button disabled>Locked</button>` : `<button onclick="buyWeapon(${i})">Buy 💠${format(w.cost)}</button>`;
+        box.innerHTML += `<div class="weapon-card ${locked && !owned ? "locked" : ""}">
+            <strong>${w.name}${eq ? " (E)" : ""}</strong>
+            <div class="small">ATK ${w.unknown ? "Scaling" : w.atk}</div>${btn}
         </div>`;
     });
 }
@@ -729,26 +691,24 @@ function buyWeapon(i) {
     game.stones -= w.cost;
     game.weapons.push(i);
     if (i > game.weaponMastery) game.weaponMastery = i;
-    notify("Weapon purchased");
+    notify("Bought");
     update();
 }
 function equipWeapon(i) { game.equippedWeapon = i; update(); }
 function unequipWeapon() { game.equippedWeapon = null; update(); }
 
-/* =========================================================
-   TECHNIQUES (restored)
-========================================================= */
+// ===== Techniques =====
 function renderTechniques() {
     const box = document.getElementById("techList");
     box.innerHTML = "";
     techniques.forEach((t, i) => {
         const owned = game.techniques.includes(i);
         const locked = game.realm < t.req && !game.unknownUnlocked;
-        const btn = owned ? `<button disabled>✓ Learned</button>` :
-                    locked ? `<button disabled>🔒 ${normalRealms[t.req].name}</button>` :
+        const btn = owned ? `<button disabled>Learned</button>` :
+                    locked ? `<button disabled>Locked</button>` :
                     `<button onclick="learnTechnique(${i})">Learn 💠${format(t.cost)}</button>`;
-        box.innerHTML += `<div class="tech ${locked&&!owned?"locked":""}">
-            <strong>${t.name}</strong> <span class="small">${t.quality}</span>
+        box.innerHTML += `<div class="tech ${locked && !owned ? "locked" : ""}">
+            <strong>${t.name}</strong>
             <p class="small">${t.desc}</p>${btn}
         </div>`;
     });
@@ -762,7 +722,7 @@ function renderCombatTechniques() {
         if (!techniques[i].skill) return;
         const b = document.createElement("button");
         b.className = "full";
-        b.textContent = "📜 " + techniques[i].name;
+        b.textContent = techniques[i].name;
         b.onclick = () => useTechnique(i);
         box.appendChild(b);
     });
@@ -773,77 +733,77 @@ function learnTechnique(i) {
     if (game.realm < t.req && !game.unknownUnlocked) return;
     game.stones -= t.cost;
     game.techniques.push(i);
-    notify("Technique learned");
+    notify("Learned");
     update();
 }
 function useTechnique(i) {
     if (!game.combat) return;
     const t = techniques[i];
-    if (!t.skill) return;
-    log("📜 " + t.name, "good");
+    log(t.name, "good");
     if (game.enemy.chaos) {
         game.enemy.hp = game.enemy.hp.mul(0.5);
         if (game.enemy.hp.l < 0) victory();
     } else {
-        game.enemy.hp -= 100 * t.skill;
+        game.enemy.hp -= 80 * (t.skill || 1);
         if (game.enemy.hp <= 0) victory();
     }
     enemyTurn();
     update();
 }
 
-/* =========================================================
-   INVENTORY (restored)
-========================================================= */
+// ===== Inventory =====
 function renderInventory() {
     const box = document.getElementById("inventoryList");
-    if (game.equipment.length === 0) {
+    if (!game.equipment.length) {
         box.innerHTML = `<div class="card small">Empty</div>`;
         return;
     }
     box.innerHTML = game.equipment.map(n => {
         const a = artifacts.find(x => x.name === n);
-        return `<div class="card"><strong>✨ ${a.name}</strong><p class="small">${a.desc}</p></div>`;
+        return `<div class="card"><strong>${a.name}</strong><p class="small">${a.desc}</p></div>`;
     }).join("");
 }
 function findArtifact() {
-    const a = artifacts[rand(0, artifacts.length-1)];
+    const a = artifacts[rand(0, 3)];
     if (game.equipment.includes(a.name)) {
-        game.stones += 100;
+        game.stones += 120;
         return;
     }
     game.equipment.push(a.name);
-    log("✨ " + a.name, "good");
+    log("Artifact: " + a.name, "good");
     notify("Artifact found!");
 }
 
-/* =========================================================
-   DAO / RELICS / TITLES / SECT
-========================================================= */
+// ===== Dao / Relics / Titles / Sect =====
 function renderLaws() {
     const box = document.getElementById("lawList");
+    if (game.reincarnations < 1) {
+        box.innerHTML = `<div class="card small">Sealed until first reincarnation</div>`;
+        return;
+    }
     box.innerHTML = laws.map(l => {
         const owned = game.laws.includes(l.id);
-        return `<div class="law-card law">
+        return `<div class="law-card">
             <strong>${l.name}</strong>
             <p class="small">${l.desc}</p>
-            <button ${owned?"disabled":""} onclick="comprehendLaw('${l.id}')">${owned?"Comprehended":"Comprehend ("+l.cost+" reinc)"}</button>
+            <button ${owned ? "disabled" : ""} onclick="comprehendLaw('${l.id}')">
+                ${owned ? "Comprehended" : "Comprehend (" + l.cost + " reinc)"}
+            </button>
         </div>`;
     }).join("");
 }
 function comprehendLaw(id) {
     const l = laws.find(x => x.id === id);
     if (!l || game.laws.includes(id)) return;
-    if (game.reincarnations < l.cost) { notify("Need more reincarnations"); return; }
+    if (game.reincarnations < l.cost) return notify("Need more reincarnations");
     game.laws.push(id);
-    game.karma += 5;
     notify("Comprehended " + l.name);
     update();
 }
 
 function renderRelics() {
     const box = document.getElementById("relicList");
-    if (game.relics.length === 0) {
+    if (!game.relics.length) {
         box.innerHTML = `<div class="card small">No relics yet</div>`;
         return;
     }
@@ -858,10 +818,12 @@ function renderTitles() {
     box.innerHTML = possibleTitles.map(t => {
         const owned = game.titles.includes(t.id);
         const active = game.activeTitles.includes(t.id);
-        return `<div class="title-card title">
+        return `<div class="title-card">
             <strong>${t.name}</strong>
             <p class="small">${t.desc}</p>
-            <button ${!owned?"disabled":""} onclick="toggleTitle('${t.id}')">${active?"Unequip":(owned?"Equip":"Locked")}</button>
+            <button ${!owned ? "disabled" : ""} onclick="toggleTitle('${t.id}')">
+                ${active ? "Unequip" : (owned ? "Equip" : "Locked")}
+            </button>
         </div>`;
     }).join("");
 }
@@ -870,7 +832,7 @@ function toggleTitle(id) {
     if (game.activeTitles.includes(id)) {
         game.activeTitles = game.activeTitles.filter(x => x !== id);
     } else {
-        if (game.activeTitles.length >= 3) { notify("Max 3 titles"); return; }
+        if (game.activeTitles.length >= 3) return notify("Max 3 titles");
         game.activeTitles.push(id);
     }
     update();
@@ -885,67 +847,58 @@ function checkTitles() {
         if (t.req === "disciples" && game.disciples >= t.threshold) ok = true;
         if (ok) {
             game.titles.push(t.id);
-            notify("Title unlocked: " + t.name);
+            notify("Title: " + t.name);
         }
     });
 }
 
 function foundSect() {
-    // No requirements
-    if (game.sectName) { notify("Already founded"); return; }
-    const name = prompt("Name your sect:");
+    if (game.sectName) return notify("Already founded");
+    const name = prompt("Sect name:");
     if (!name) return;
     game.sectName = name;
-    notify("Sect founded: " + name);
+    notify("Sect founded");
     update();
 }
 function recruitDisciple() {
-    if (!game.sectName) { notify("Found a sect first"); return; }
-    if (game.stones < 5000) { notify("Need 5000 stones"); return; }
+    if (!game.sectName) return notify("Found a sect first");
+    if (game.stones < 5000) return notify("Need 5000 stones");
     game.stones -= 5000;
     game.disciples++;
     notify("Disciple recruited");
     update();
 }
 
-/* =========================================================
-   EXPLORATION + CHAOS (restored)
-========================================================= */
+// ===== Explore & Combat =====
 function renderAreas() {
     const box = document.getElementById("areas");
     box.innerHTML = "";
     areas.forEach((a, i) => {
         if (a.chaos && !game.unknownUnlocked) return;
-
         if (a.chaos) {
-            box.innerHTML += `
-                <div class="card chaos">
-                    <strong>${a.name}</strong>
-                    <p class="small">Stage ${game.chaosStage} | Highest ${game.chaosHighest}</p>
-                    <p class="small">Stage 1 is already stronger than Heavenly Battlefield.</p>
-                    <button onclick="enterChaos()">🌌 Enter</button>
-                    <button onclick="advanceStage()">⬆ Advance Stage</button>
-                </div>`;
+            box.innerHTML += `<div class="card chaos">
+                <strong>${a.name}</strong>
+                <p class="small">Stage ${game.chaosStage} | Highest ${game.chaosHighest}</p>
+                <button onclick="enterChaos()">Enter</button>
+                <button onclick="advanceStage()">Advance Stage</button>
+            </div>`;
             return;
         }
-
         const locked = game.realm < a.req;
-        box.innerHTML += `
-            <div class="card ${locked?"locked":""}">
-                <strong>${a.name}</strong>
-                <p class="small">Required: ${normalRealms[a.req].name}</p>
-                <button ${locked?"disabled":""} onclick="explore(${i})">${locked?"🔒 Locked":"🌌 Enter"}</button>
-            </div>`;
+        box.innerHTML += `<div class="card ${locked ? "locked" : ""}">
+            <strong>${a.name}</strong>
+            <p class="small">Required: ${normalRealms[a.req].name}</p>
+            <button ${locked ? "disabled" : ""} onclick="explore(${i})">${locked ? "Locked" : "Enter"}</button>
+        </div>`;
     });
 }
 
 function explore(i) {
     const a = areas[i];
     if (game.realm < a.req) return;
-    const idx = a.enemies[rand(0, a.enemies.length-1)];
-    const e = enemies[idx];
-    const scale = 1 + Math.max(0, game.realm - e.realm) * 0.12;
-    game.enemy = {...e, maxHp: e.hp*scale, hp: e.hp*scale, atk: e.atk*scale, def: e.def*scale};
+    const e = enemies[a.enemies[rand(0, a.enemies.length - 1)]];
+    const s = 1 + Math.max(0, game.realm - e.realm) * 0.12;
+    game.enemy = { ...e, maxHp: e.hp * s, hp: e.hp * s, atk: e.atk * s, def: e.def * s };
     game.combat = true;
     game.defending = false;
     showTab("combat");
@@ -955,11 +908,8 @@ function explore(i) {
 function enterChaos() {
     if (!game.unknownUnlocked) return;
     if (game.chaosStage < 1) game.chaosStage = 1;
-
-    // Stage 1 already stronger than Heavenly Battlefield
     const base = 25000 * (1 + game.chaosStage * 0.4);
     const mult = new LogNum(Math.log10(base) + prestige().l * 0.2);
-
     game.enemy = {
         name: "Chaos Entity",
         chaos: true,
@@ -968,11 +918,9 @@ function enterChaos() {
         hp: mult.mul(5),
         atk: mult.mul(2),
         def: mult.mul(1),
-        stones: mult.mul(0.7),
-        xp: mult.mul(0.5)
+        stones: mult.mul(0.7)
     };
     game.combat = true;
-    game.defending = false;
     showTab("combat");
     update();
 }
@@ -981,7 +929,7 @@ function advanceStage() {
     game.chaosStage++;
     if (game.chaosStage > game.chaosHighest) game.chaosHighest = game.chaosStage;
     if (game.chaosStage % 25 === 0 && chance(0.4)) {
-        const r = possibleRelics[rand(0, possibleRelics.length-1)];
+        const r = possibleRelics[rand(0, 3)];
         if (!game.relics.includes(r.id)) {
             game.relics.push(r.id);
             notify("Relic: " + r.name);
@@ -1000,24 +948,23 @@ function renderEnemy() {
         return;
     }
     document.getElementById("combatControls").classList.remove("hidden");
-    const hpStr = e.chaos ? e.hp.format() : format(e.hp);
-    const maxStr = e.chaos ? e.maxHp.format() : format(e.maxHp);
-    box.innerHTML = `
-        <div class="enemy">
-            <div class="stat"><strong>${e.name}</strong><span>${e.chaos?"Chaos "+e.stage:""}</span></div>
-            <div class="stat">HP ${hpStr} / ${maxStr}</div>
-            <div class="bar"><div class="fill hp" style="width:60%"></div></div>
-        </div>`;
+    const hp = e.chaos ? e.hp.format() : format(e.hp);
+    const max = e.chaos ? e.maxHp.format() : format(e.maxHp);
+    box.innerHTML = `<div class="enemy">
+        <div class="stat"><strong>${e.name}</strong><span>${e.chaos ? "Chaos " + e.stage : ""}</span></div>
+        <div class="stat">HP ${hp} / ${max}</div>
+        <div class="bar"><div class="fill hp" style="width:60%"></div></div>
+    </div>`;
 }
 
 function playerAttack() {
     if (!game.combat) return;
-    log("⚔ Attack", "good");
+    log("Attack", "good");
     if (game.enemy.chaos) {
         game.enemy.hp = game.enemy.hp.mul(0.6);
         if (game.enemy.hp.l < 0) victory();
     } else {
-        game.enemy.hp -= Math.max(20, 80);
+        game.enemy.hp -= 60;
         if (game.enemy.hp <= 0) victory();
     }
     enemyTurn();
@@ -1030,9 +977,8 @@ function defend() {
 }
 
 function useFusion() {
-    // Available from Qi Gathering
-    if (game.realm < 1 && !game.unknownUnlocked) { notify("Reach Qi Gathering first"); return; }
-    if (game.fusionActive) { notify("Already active"); return; }
+    if (game.realm < 1 && !game.unknownUnlocked) return notify("Reach Qi Gathering first");
+    if (game.fusionActive) return notify("Already active");
     game.fusionActive = true;
     game.fusionTimer = 30;
     notify("Fusion activated!");
@@ -1055,40 +1001,16 @@ function victory() {
     const e = game.enemy;
     game.combat = false;
     game.enemy = null;
-    let stones = e.chaos ? Math.max(300, Math.pow(10, Math.min(e.stones.l, 10))) : e.stones * (1 + game.realm * 0.1);
+    let stones = e.chaos ? Math.max(400, Math.pow(10, Math.min(e.stones.l, 9))) : e.stones * (1 + game.realm * 0.1);
     game.stones += stones;
     game.xp += stones * 0.4;
-    game.karma += 2;
     log("Victory +" + format(stones) + " stones", "gold");
     if (chance(0.08)) findArtifact();
     if (e.chaos && chance(0.4)) {
         game.chaosStage++;
         if (game.chaosStage > game.chaosHighest) game.chaosHighest = game.chaosStage;
-        log("Stage advanced!", "mythic");
+        log("Stage advanced", "mythic");
     }
-    update();
-}
-
-function maybeWorldEvent() {
-    // Available from Qi Gathering
-    if (game.worldEvent || (game.realm < 1 && !game.unknownUnlocked) || chance(0.997)) return;
-    const events = [
-        {title:"Demon Invasion",desc:"Stronger enemies, better rewards."},
-        {title:"Heavenly Auction",desc:"Rare materials appear."},
-        {title:"Realm Collapse",desc:"High risk, high reward."}
-    ];
-    game.worldEvent = events[rand(0,2)];
-    document.getElementById("worldEventCard").style.display = "block";
-    document.getElementById("worldEventTitle").textContent = game.worldEvent.title;
-    document.getElementById("worldEventDesc").textContent = game.worldEvent.desc;
-}
-function resolveWorldEvent() {
-    if (!game.worldEvent) return;
-    game.stones += 8000;
-    game.karma += 8;
-    notify("Event resolved");
-    game.worldEvent = null;
-    document.getElementById("worldEventCard").style.display = "none";
     update();
 }
 
@@ -1096,103 +1018,39 @@ function renderRealms() {
     const box = document.getElementById("realmList");
     box.innerHTML = normalRealms.map((r, i) => {
         const s = game.unknownUnlocked ? "✓" : i < game.realm ? "✓" : i === game.realm ? "☯" : "🔒";
-        return `<div class="realm-row"><span>${i+1}. ${r.name}</span><span>${s}</span></div>`;
+        return `<div class="realm-row"><span>${i + 1}. ${r.name}</span><span>${s}</span></div>`;
     }).join("") + (game.unknownUnlocked ? `<div class="realm-row"><span>∞ Unknown Realm</span><span>☯</span></div>` : "");
 }
 
-/* =========================================================
-   SAVE SYSTEM (restored with checksum)
-========================================================= */
-const SAVE_KEY = "poi_restored_v1";
-const SAVE_MAGIC = "PATH_OF_IMMORTAL_SAVE";
-const SAVE_VERSION = 3;
-
-function safeStringify(obj) {
-    return JSON.stringify(obj, (k, v) => {
-        if (typeof v === "number") {
-            if (Number.isNaN(v)) return "@@NaN@@";
-            if (v === Infinity) return "@@Infinity@@";
-            if (v === -Infinity) return "@@-Infinity@@";
-        }
-        return v;
-    });
-}
-function safeParse(str) {
-    return JSON.parse(str, (k, v) => {
-        if (v === "@@NaN@@") return NaN;
-        if (v === "@@Infinity@@") return Infinity;
-        if (v === "@@-Infinity@@") return -Infinity;
-        return v;
-    });
-}
-function computeChecksum(str) {
-    let h = 5381;
-    for (let i = 0; i < str.length; i++) h = ((h * 33) ^ str.charCodeAt(i)) >>> 0;
-    return h.toString(36);
-}
-function utf8ToBase64(str) {
-    const bytes = new TextEncoder().encode(str);
-    let bin = "";
-    bytes.forEach(b => bin += String.fromCharCode(b));
-    return btoa(bin);
-}
-function base64ToUtf8(b64) {
-    const bin = atob(b64);
-    const bytes = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-    return new TextDecoder().decode(bytes);
-}
-
-function generateSaveCode() {
-    const stateStr = safeStringify(structuredClone(game));
-    const payload = {
-        magic: SAVE_MAGIC,
-        saveVersion: SAVE_VERSION,
-        exportedAt: Date.now(),
-        checksum: computeChecksum(stateStr),
-        state: stateStr
-    };
-    return utf8ToBase64(JSON.stringify(payload));
-}
-
-function validateAndDecodeSaveCode(code) {
-    try {
-        const payload = JSON.parse(base64ToUtf8(code.trim()));
-        if (!payload || payload.magic !== SAVE_MAGIC) return null;
-        if (payload.saveVersion > SAVE_VERSION) return null;
-        if (computeChecksum(payload.state) !== payload.checksum) return null;
-        return safeParse(payload.state);
-    } catch (e) { return null; }
-}
-
+// ===== Save =====
+const SAVE_KEY = "poi_functional_v1";
 function saveGame() {
     game.lastSave = Date.now();
-    localStorage.setItem(SAVE_KEY, safeStringify(game));
+    localStorage.setItem(SAVE_KEY, JSON.stringify(game));
     notify("Saved");
 }
 function loadGame() {
     try {
         const raw = localStorage.getItem(SAVE_KEY);
         if (raw) {
-            const saved = safeParse(raw);
-            game = Object.assign(structuredClone(defaultGame), saved);
+            game = Object.assign(structuredClone(defaultGame), JSON.parse(raw));
             processOffline();
         }
     } catch (e) {}
 }
 function processOffline() {
     const now = Date.now();
-    const sec = Math.min((now - (game.lastSave || now)) / 1000, 86400 * 3);
-    if (sec > 10) {
-        const gain = cultRate().l > 0 ? Math.pow(10, Math.min(cultRate().l, 8)) * sec / 10 : sec * 2;
+    const sec = Math.min((now - (game.lastSave || now)) / 1000, 86400 * 2);
+    if (sec > 15) {
+        const gain = Math.pow(10, Math.min(cultRate().l, 7)) * (sec / 8);
         game.cultivation += gain;
-        notify("Offline +" + format(gain) + " cultivation");
+        notify("Offline +" + format(gain));
     }
     game.lastSave = now;
 }
 
 function exportSaveCode() {
-    const code = generateSaveCode();
+    const code = btoa(unescape(encodeURIComponent(JSON.stringify(game))));
     document.getElementById("exportArea").classList.remove("hidden");
     document.getElementById("exportCodeText").value = code;
     notify("Exported");
@@ -1203,15 +1061,18 @@ function copyExportCode() {
     notify("Copied");
 }
 function importSaveCode() {
-    const result = validateAndDecodeSaveCode(document.getElementById("importCodeText").value);
-    if (!result) { notify("Invalid code"); return; }
-    if (!confirm("Import this save? Current progress will be replaced.")) return;
-    game = Object.assign(structuredClone(defaultGame), result);
-    processOffline();
-    saveGame();
-    update();
-    document.getElementById("importCodeText").value = "";
-    notify("Imported");
+    try {
+        const raw = document.getElementById("importCodeText").value.trim();
+        const data = JSON.parse(decodeURIComponent(escape(atob(raw))));
+        if (!confirm("Replace current save?")) return;
+        game = Object.assign(structuredClone(defaultGame), data);
+        processOffline();
+        saveGame();
+        update();
+        notify("Imported");
+    } catch (e) {
+        notify("Invalid code");
+    }
 }
 
 function showTab(id) {
@@ -1219,6 +1080,7 @@ function showTab(id) {
         .forEach(t => document.getElementById(t).classList.toggle("hidden", t !== id));
 }
 
+// Loops
 setInterval(() => {
     if (game.fusionActive) {
         game.fusionTimer--;
@@ -1228,9 +1090,9 @@ setInterval(() => {
         }
     }
     if (!game.combat) {
-        const add = Math.max(1, Math.pow(10, Math.min(cultRate().l, 7)));
+        const add = Math.max(1, Math.pow(10, Math.min(cultRate().l, 6)));
         game.cultivation += add * (game.reincarnations + 1);
-        if (game.disciples > 0) game.stones += game.disciples * 2;
+        if (game.disciples > 0) game.stones += game.disciples;
     }
     update();
 }, 1000);
@@ -1238,7 +1100,7 @@ setInterval(() => {
 setInterval(saveGame, 30000);
 
 loadGame();
-log("☯ Restored Edition ready", "good");
+log("Game ready", "good");
 update();
 </script>
 </body>
