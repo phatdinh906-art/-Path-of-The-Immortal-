@@ -47,7 +47,7 @@ input[type=number]{width:100%;padding:6px;border-radius:4px;border:1px solid #66
 <body>
 <header>
     <h1>☯ PATH OF THE IMMORTAL ☯</h1>
-    <div class="subtitle">Functional Edition</div>
+    <div class="subtitle">A Journey Beyond the Mortal Realm</div>
 </header>
 
 <main>
@@ -73,7 +73,7 @@ input[type=number]{width:100%;padding:6px;border-radius:4px;border:1px solid #66
     <button class="full" onclick="deepMeditate()">🌌 Deep Meditation</button>
     <button class="full" onclick="breakthrough()">☯ Breakthrough</button>
     <button class="full" onclick="heal()">🌿 Heal</button>
-    <button class="full" id="reincarnateBtn" onclick="reincarnate()">☯ Reincarnate</button>
+    <button class="full" id="reincarnateBtn" onclick="reincarnate()" style="display:none">☯ Reincarnate</button>
     <button class="full" onclick="saveGame()">💾 Save</button>
 </section>
 
@@ -90,11 +90,10 @@ input[type=number]{width:100%;padding:6px;border-radius:4px;border:1px solid #66
         <button class="tab" onclick="showTab('titles')">Titles</button>
         <button class="tab" onclick="showTab('sect')">Sect</button>
         <button class="tab" onclick="showTab('inventory')">Inventory</button>
-        <button class="tab" id="reincTabBtn" onclick="showTab('reincarnation')">Reincarnation</button>
+        <button class="tab" id="reincTabBtn" onclick="showTab('reincarnation')" style="display:none">Reincarnation</button>
         <button class="tab" onclick="showTab('save')">Save</button>
     </div>
 
-    <!-- Cultivation -->
     <div id="cultivation">
         <div class="card">
             <strong>Spiritual Refining</strong>
@@ -114,20 +113,17 @@ input[type=number]{width:100%;padding:6px;border-radius:4px;border:1px solid #66
         <div class="card"><strong>Realm Progression</strong><div id="realmList"></div></div>
     </div>
 
-    <!-- Weapons -->
     <div id="weapons" class="hidden">
         <h2>⚔ Armory</h2>
         <div class="card"><div class="stat"><span>Weapon Mastery</span><strong id="masteryBonus">+0%</strong></div></div>
         <div id="weaponList"></div>
     </div>
 
-    <!-- Techniques -->
     <div id="techniques" class="hidden">
         <h2>📜 Techniques</h2>
         <div id="techList"></div>
     </div>
 
-    <!-- Combat -->
     <div id="combat" class="hidden">
         <div id="enemyArea"><div class="card">No enemy</div></div>
         <div id="combatControls" class="hidden">
@@ -141,30 +137,25 @@ input[type=number]{width:100%;padding:6px;border-radius:4px;border:1px solid #66
         <div id="log" class="log"></div>
     </div>
 
-    <!-- Explore -->
     <div id="explore" class="hidden">
         <div id="areas"></div>
     </div>
 
-    <!-- Dao -->
     <div id="dao" class="hidden">
         <h2>📜 Dao Comprehension</h2>
         <div id="lawList"></div>
     </div>
 
-    <!-- Relics -->
     <div id="relics" class="hidden">
         <h2>🔮 Chaos Relics</h2>
         <div id="relicList"></div>
     </div>
 
-    <!-- Titles -->
     <div id="titles" class="hidden">
         <h2>👑 Titles</h2>
         <div id="titleList"></div>
     </div>
 
-    <!-- Sect -->
     <div id="sect" class="hidden">
         <h2>🏯 Sect</h2>
         <div class="card">
@@ -175,13 +166,11 @@ input[type=number]{width:100%;padding:6px;border-radius:4px;border:1px solid #66
         <button class="full" onclick="recruitDisciple()">Recruit Disciple</button>
     </div>
 
-    <!-- Inventory -->
     <div id="inventory" class="hidden">
         <h2>🎒 Inventory</h2>
         <div id="inventoryList"></div>
     </div>
 
-    <!-- Reincarnation -->
     <div id="reincarnation" class="hidden">
         <div class="card">
             <div class="stat"><span>Reincarnations</span><strong id="reincarnationCount">0</strong></div>
@@ -202,7 +191,6 @@ input[type=number]{width:100%;padding:6px;border-radius:4px;border:1px solid #66
         </div>
     </div>
 
-    <!-- Save -->
     <div id="save" class="hidden">
         <button class="full" onclick="saveGame()">💾 Save Now</button>
         <button class="full" onclick="exportSaveCode()">📤 Export</button>
@@ -218,8 +206,8 @@ input[type=number]{width:100%;padding:6px;border-radius:4px;border:1px solid #66
 <!-- RIGHT -->
 <section class="panel">
     <h2>☯ Journal</h2>
-    <div class="card"><strong>Power</strong><p id="powerSummary">×1</p></div>
-    <div class="card"><strong>Path</strong><p id="pathDesc">A nameless mortal.</p></div>
+    <div class="card"><strong>Power</strong><p id="powerSummary">A greater path is still sealed...</p></div>
+    <div class="card"><strong>Path</strong><p id="pathDesc">A nameless mortal seeking immortality.</p></div>
     <div class="card" id="chaosPanel" style="display:none">
         <strong>🌌 Infinite Chaos</strong>
         <div class="stat"><span>Stage</span><strong id="chaosStage">0</strong></div>
@@ -235,7 +223,6 @@ input[type=number]{width:100%;padding:6px;border-radius:4px;border:1px solid #66
 <script>
 "use strict";
 
-// ===== Log Number =====
 class LogNum {
     constructor(l = -Infinity) { this.l = (typeof l === "number" && isFinite(l)) ? l : -Infinity; }
     static from(n) {
@@ -270,7 +257,6 @@ class LogNum {
     }
 }
 
-// ===== Data =====
 const normalRealms = [
     {name:"Mortal",req:100,mult:1},
     {name:"Qi Gathering",req:500,mult:1.7},
@@ -378,7 +364,6 @@ const defaultGame = {
 
 let game = structuredClone(defaultGame);
 
-// ===== Core =====
 function prestige() { return new LogNum(Math.log10(game.reincarnations + 1)); }
 function mastery() { return LogNum.from(1 + game.weaponMastery * 0.05); }
 function realmMult() {
@@ -430,17 +415,20 @@ function log(t, c = "") {
 function rand(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
 function chance(p) { return Math.random() < p; }
 
-// ===== Update =====
+function canSeeReincarnation() {
+    return game.realm === normalRealms.length - 1 && game.cultivation >= normalRealms[normalRealms.length - 1].req;
+}
+
 function update() {
-    const canSeeReinc = game.realm === normalRealms.length - 1 && game.cultivation >= normalRealms[normalRealms.length - 1].req;
+    const showReinc = canSeeReincarnation();
 
     document.getElementById("realm").textContent = game.unknownUnlocked ? "??? — Unknown Realm" : normalRealms[game.realm].name;
     document.getElementById("level").textContent = game.level;
-    document.getElementById("currentPath").textContent = game.path ? game.path : "None";
+    document.getElementById("currentPath").textContent = game.path || "None";
     document.getElementById("atk").textContent = totalAtk().format();
     document.getElementById("def").textContent = totalDef().format();
     document.getElementById("stones").textContent = format(game.stones);
-    document.getElementById("power").textContent = canSeeReinc ? "×" + prestige().format() : "???";
+    document.getElementById("power").textContent = showReinc ? "×" + prestige().format() : "???";
 
     document.getElementById("hpText").textContent = format(game.hp) + (game.unknownUnlocked ? " / ∞" : " / " + format(game.maxHp));
     document.getElementById("hpBar").style.width = game.unknownUnlocked ? "100%" : Math.min(100, game.hp / game.maxHp * 100) + "%";
@@ -453,19 +441,15 @@ function update() {
     document.getElementById("defCost").textContent = format(upgradeCost("def"));
     document.getElementById("masteryBonus").textContent = `+${game.weaponMastery * 5}%`;
 
-    // Reincarnation visibility
-    document.getElementById("reincarnationCount").textContent = canSeeReinc ? format(game.reincarnations) : "???";
-    document.getElementById("prestigeBonus").textContent = canSeeReinc ? "×" + prestige().format() : "???";
-    document.getElementById("powerSummary").textContent = canSeeReinc ? "×" + prestige().format() + " from " + format(game.reincarnations) + " reincarnations" : "A greater path is still sealed...";
-    document.getElementById("pathDesc").textContent = game.unknownUnlocked ? "Beyond the known Dao." : (game.reincarnations > 0 ? "A reincarnated cultivator." : "A nameless mortal.");
+    // Completely hide reincarnation information
+    document.getElementById("reincarnationCount").textContent = showReinc ? format(game.reincarnations) : "???";
+    document.getElementById("prestigeBonus").textContent = showReinc ? "×" + prestige().format() : "???";
+    document.getElementById("powerSummary").textContent = showReinc ? "×" + prestige().format() + " from " + format(game.reincarnations) + " reincarnations" : "A greater path is still sealed...";
+    document.getElementById("pathDesc").textContent = game.unknownUnlocked ? "Beyond the known Dao." : "A nameless mortal seeking immortality.";
 
-    const reincBtn = document.getElementById("reincarnateBtn");
-    const reincTab = document.getElementById("reincTabBtn");
-    if (reincBtn) {
-        reincBtn.disabled = !canSeeReinc;
-        reincBtn.textContent = canSeeReinc ? "☯ Reincarnate" : "☯ Reincarnate (Max Immortal Ascension)";
-    }
-    if (reincTab) reincTab.style.display = canSeeReinc ? "" : "none";
+    // Hide buttons and tab
+    document.getElementById("reincarnateBtn").style.display = showReinc ? "" : "none";
+    document.getElementById("reincTabBtn").style.display = showReinc ? "" : "none";
 
     // Chaos panel
     const cp = document.getElementById("chaosPanel");
@@ -473,13 +457,15 @@ function update() {
         cp.style.display = "block";
         document.getElementById("chaosStage").textContent = game.chaosStage;
         document.getElementById("chaosHighest").textContent = game.chaosHighest;
-    } else cp.style.display = "none";
+    } else {
+        cp.style.display = "none";
+    }
 
     document.getElementById("sectName").textContent = game.sectName || "None";
     document.getElementById("discipleCount").textContent = game.disciples;
     document.getElementById("activeTitles").textContent = game.activeTitles.length ? game.activeTitles.join(", ") : "None";
 
-    // Guidance
+    // Guidance - no reincarnation spoilers
     const tips = [];
     tips.push("• Meditate and convert Spirit Stones");
     tips.push("• Explore areas and fight enemies");
@@ -491,10 +477,10 @@ function update() {
     }
     if (game.reincarnations >= 1) {
         tips.push("• Comprehend Dao Laws");
-        tips.push("• Master all 5 Laws to open Unknown Realm");
+        tips.push("• Master all 5 Laws to open the next path");
     }
-    if (canSeeReinc) {
-        tips.push("• Reincarnate for permanent power");
+    if (showReinc) {
+        tips.push("• A new path has opened – Reincarnation");
     }
     if (game.unknownUnlocked) {
         tips.push("• Enter Infinite Chaos");
@@ -520,7 +506,6 @@ function upgradeCost(stat) {
     return Math.floor(base * Math.pow(val / (stat === "atk" ? 10 : 5), 1.35));
 }
 
-// ===== Actions =====
 function convertCustomStones() {
     const amount = parseInt(document.getElementById("spiritStoneInput").value);
     if (isNaN(amount) || amount <= 0) return notify("Enter a valid number");
@@ -603,8 +588,7 @@ function breakthrough() {
 }
 
 function reincarnate() {
-    const can = game.realm === normalRealms.length - 1 && game.cultivation >= normalRealms[normalRealms.length - 1].req;
-    if (!can) return notify("Maximize Immortal Ascension first");
+    if (!canSeeReincarnation()) return notify("Maximize Immortal Ascension first");
     if (!game.unknownUnlocked) return notify("Reach Unknown Realm first");
 
     const threshold = 15000000;
@@ -666,7 +650,6 @@ function choosePath(p) {
     update();
 }
 
-// ===== Weapons =====
 function renderWeapons() {
     const box = document.getElementById("weaponList");
     box.innerHTML = "";
@@ -697,7 +680,6 @@ function buyWeapon(i) {
 function equipWeapon(i) { game.equippedWeapon = i; update(); }
 function unequipWeapon() { game.equippedWeapon = null; update(); }
 
-// ===== Techniques =====
 function renderTechniques() {
     const box = document.getElementById("techList");
     box.innerHTML = "";
@@ -751,7 +733,6 @@ function useTechnique(i) {
     update();
 }
 
-// ===== Inventory =====
 function renderInventory() {
     const box = document.getElementById("inventoryList");
     if (!game.equipment.length) {
@@ -774,11 +755,11 @@ function findArtifact() {
     notify("Artifact found!");
 }
 
-// ===== Dao / Relics / Titles / Sect =====
 function renderLaws() {
     const box = document.getElementById("lawList");
+    // Dao Laws stay hidden until first reincarnation
     if (game.reincarnations < 1) {
-        box.innerHTML = `<div class="card small">Sealed until first reincarnation</div>`;
+        box.innerHTML = `<div class="card small">A mysterious power is sealed...</div>`;
         return;
     }
     box.innerHTML = laws.map(l => {
@@ -869,7 +850,6 @@ function recruitDisciple() {
     update();
 }
 
-// ===== Explore & Combat =====
 function renderAreas() {
     const box = document.getElementById("areas");
     box.innerHTML = "";
@@ -1022,8 +1002,7 @@ function renderRealms() {
     }).join("") + (game.unknownUnlocked ? `<div class="realm-row"><span>∞ Unknown Realm</span><span>☯</span></div>` : "");
 }
 
-// ===== Save =====
-const SAVE_KEY = "poi_functional_v1";
+const SAVE_KEY = "poi_hidden_reinc_v1";
 function saveGame() {
     game.lastSave = Date.now();
     localStorage.setItem(SAVE_KEY, JSON.stringify(game));
@@ -1080,7 +1059,6 @@ function showTab(id) {
         .forEach(t => document.getElementById(t).classList.toggle("hidden", t !== id));
 }
 
-// Loops
 setInterval(() => {
     if (game.fusionActive) {
         game.fusionTimer--;
