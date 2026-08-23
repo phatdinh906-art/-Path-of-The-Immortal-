@@ -674,9 +674,17 @@ function renderWeapons() {
         const owned = game.weapons.includes(i);
         const eq = game.equippedWeapon === i;
         const locked = !game.unknownUnlocked && game.realm < w.req;
-        let btn = owned
-            ? (eq ? `<button class="unequip-btn" onclick="unequipWeapon()">Unequip</button>` : `<button class="equip-btn" onclick="equipWeapon(${i})">Equip</button>`)
-            : locked ? `<button disabled>Locked</button>` : `<button onclick="buyWeapon(${i})">Buy 💠${format(w.cost)}</button>`;
+const requirementText = !game.unknownUnlocked && game.realm < w.req ? `Requires Realm ${normalRealms[w.req].name}` : "";
+let btn;
+if (owned) {
+    btn = eq
+        ? `<button class="unequip-btn" onclick="unequipWeapon()">Unequip</button>`
+        : `<button class="equip-btn" onclick="equipWeapon(${i})">Equip</button>`;
+} else if (locked) {
+    btn = `<button disabled>Locked (${requirementText})</button>`;
+} else {
+    btn = `<button onclick="buyWeapon(${i})">Buy 💠${format(w.cost)} (${requirementText})</button>`;
+}
         box.innerHTML += `<div class="weapon-card ${locked && !owned ? "locked" : ""}">
             <strong>${w.name}${eq ? " (E)" : ""}</strong>
             <div class="small">ATK ${w.unknown ? "Scaling" : w.atk}</div>${btn}
@@ -702,9 +710,12 @@ function renderTechniques() {
     techniques.forEach((t, i) => {
         const owned = game.techniques.includes(i);
         const locked = game.realm < t.req && !game.unknownUnlocked;
-        const btn = owned ? `<button disabled>Learned</button>` :
-                    locked ? `<button disabled>Locked</button>` :
-                    `<button onclick="learnTechnique(${i})">Learn 💠${format(t.cost)}</button>`;
+const requirementText = !game.unknownUnlocked && game.realm < t.req ? `Requires Realm ${normalRealms[t.req].name}` : "";
+const btn = owned
+    ? `<button disabled>Learned</button>`
+    : locked
+        ? `<button disabled>Locked (${requirementText})</button>`
+        : `<button onclick="learnTechnique(${i})">Learn 💠${format(t.cost)} (${requirementText})</button>`;
         box.innerHTML += `<div class="tech ${locked && !owned ? "locked" : ""}">
             <strong>${t.name}</strong>
             <p class="small">${t.desc}</p>${btn}
@@ -787,9 +798,11 @@ function renderLaws() {
         return `<div class="law-card">
             <strong>${l.name}</strong>
             <p class="small">${l.desc}</p>
-            <button ${owned ? "disabled" : ""} onclick="comprehendLaw('${l.id}')">
-                ${owned ? "Comprehended" : "Comprehend (" + l.cost + " reinc)"}
-            </button>
+            const locked = game.reincarnations < l.cost && !game.unknownUnlocked;
+const requirementText = !game.unknownUnlocked && game.reincarnations < l.cost ? `Requires ${l.cost} Reincarnations` : "";
+<button ${owned || locked ? "disabled" : ""} onclick="comprehendLaw('${l.id}')">
+    ${owned ? "Comprehended" : "Comprehend (" + l.cost + " reinc)" + (locked ? ` (${requirementText})` : "")}
+</button>
         </div>`;
     }).join("");
 }
@@ -822,9 +835,14 @@ function renderTitles() {
         return `<div class="title-card">
             <strong>${t.name}</strong>
             <p class="small">${t.desc}</p>
-            <button ${!owned ? "disabled" : ""} onclick="toggleTitle('${t.id}')">
-                ${active ? "Unequip" : (owned ? "Equip" : "Locked")}
-            </button>
+            const requirementMet = (t.req === "reinc" && game.reincarnations >= t.threshold) ||
+                       (t.req === "chaos" && game.chaosHighest >= t.threshold) ||
+                       (t.req === "laws" && game.laws.length >= t.threshold) ||
+                       (t.req === "disciples" && game.disciples >= t.threshold);
+const requirementText = requirementMet ? "" : `Requires ${t.req === "reinc" ? t.threshold + " Reinc" : t.req === "chaos" ? t.threshold + " Chaos" : t.req === "laws" ? t.threshold + " Laws" : t.req === "disciples" ? t.threshold + " Disciples" : ""}`;
+<button ${!requirementMet ? "disabled" : ""} onclick="toggleTitle('${t.id}')">
+    ${active ? "Unequip" : (owned ? "Equip" : "Locked")}
+</button>
         </div>`;
     }).join("");
 }
