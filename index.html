@@ -481,9 +481,10 @@ function convertStones(t) {
 
 function meditate() {
     const gain = Math.max(5, Math.pow(10, Math.min(cultRate().l, 8)));
-    game.cultivation += gain;
+    const scaledGain = gain * (game.reincarnations + 1);
+    game.cultivation += scaledGain;
     game.karma += 0.5;
-    notify("+" + format(gain));
+    notify("+" + format(scaledGain));
     update();
 }
 
