@@ -542,14 +542,17 @@ function meditate() {
 function deepMeditate() {
     const gain = Math.pow(10, Math.min(cultRate().l + 2, 14));
     game.cultivation += gain;
-    if (chance(0.12)) {
-        game.karma -= 8;
-        notify("Qi deviation!");
+
+    if (chance(0.20)) {
+        let penalty = Math.floor(15 * (game.reincarnations + 1));
+        game.karma -= penalty;
+        notify(`Qi deviation! Karma -${penalty}`);
     } else {
         notify("Deep meditation +" + format(gain));
     }
     update();
 }
+
 
 function breakthrough() {
     if (game.unknownUnlocked) return notify("No more finite breakthroughs");
