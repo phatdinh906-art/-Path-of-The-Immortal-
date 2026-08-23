@@ -728,32 +728,29 @@ function recruitDisciple() {
 function renderAreas() {
     const box = document.getElementById("areas");
     box.innerHTML = "";
-    // Simplified areas for this version
     const simpleAreas = [
-        {name:"Greenwood Forest",req:0},
-        {name:"Crimson Mountains",req:1},
-        {name:"Demon Valley",req:2},
-        {name:"Heavenly Battlefield",req:8},
-        {name:"🌌 Infinite Chaos",req:99,chaos:true}
+        {name:"Greenwood Forest",req:0,reqText:"Available"},
+        {name:"Crimson Mountains",req:1,reqText:"Requires Realm 1"},
+        {name:"Demon Valley",req:2,reqText:"Requires Realm 2"},
+        {name:"Heavenly Battlefield",req:8,reqText:"Requires Realm 8"},
+        {name:"🌌 Infinite Chaos",req:99,chaos:true,reqText:"Requires Unknown Realm"}
     ];
     simpleAreas.forEach((a, i) => {
         if (a.chaos && !game.unknownUnlocked) return;
-        if (a.chaos) {
-            box.innerHTML += `<div class="card chaos">
-                <strong>${a.name}</strong>
+        const locked = !a.chaos && game.realm < a.req;
+        box.innerHTML += `<div class="card ${locked ? "locked" : ""}">
+            <strong>${a.name}</strong>
+            ${locked ? `<div class="small" style="margin-top:4px; color:#c47b3a;">${a.reqText}</div>` : ""}
+            ${a.chaos ? `
                 <p class="small">Stage ${game.chaosStage}</p>
                 <button onclick="enterChaos()">Enter Chaos</button>
-                <button onclick="advanceStage()">Advance</button>
-            </div>`;
-            return;
-        }
-        const locked = game.realm < a.req;
-        box.innerHTML += `<div class="card ${locked?"locked":""}">
-            <strong>${a.name}</strong>
-            <button ${locked?"disabled":""} onclick="explore(${i})">${locked?"Locked":"Enter"}</button>
+                <button onclick="advanceStage()">Advance</button>`
+                : `<button ${locked ? "disabled" : ""} onclick="explore(${i})">${locked ? "Locked" : "Enter"}</button>`
+            }
         </div>`;
     });
 }
+
 
 function explore(i) {
     // simple combat start
@@ -766,21 +763,28 @@ function explore(i) {
 function enterChaos() {
     if (!game.unknownUnlocked) return;
     if (game.chaosStage < 1) game.chaosStage = 1;
-    const S = game.chaosStage;
-    const base = new LogNum(Math.log10(100) + prestige().l * 0.3 + Math.log10(S));
+
+    // Get previous area enemy base stats (e.g., Demon Valley or Heavenly Battlefield)
+    const prevRealm = Math.min(game.realm, normalRealms.length - 1);
+    const baseCult = normalRealms[prevRealm].req;
+
+    // Base enemy stats stronger than previous area enemy
+    const baseMultiplier = new LogNum(Math.log10(baseCult) + 1); // +1 to ensure stronger
+
     game.enemy = {
         name: "Chaos Entity",
         chaos: true,
-        stage: S,
-        maxHp: base.mul(3),
-        hp: base.mul(3),
-        atk: base.mul(1.2),
-        def: base.mul(0.6)
+        stage: game.chaosStage,
+        maxHp: baseMultiplier.mul(3),
+        hp: baseMultiplier.mul(3),
+        atk: baseMultiplier.mul(1.5),  // stronger attack
+        def: baseMultiplier.mul(0.9)   // stronger defense
     };
     game.combat = true;
     showTab("combat");
     update();
 }
+
 
 function advanceStage() {
     game.chaosStage++;
