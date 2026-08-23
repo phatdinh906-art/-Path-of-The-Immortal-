@@ -952,12 +952,11 @@ setInterval(() => {
     }
     if (!game.combat) {
         const add = Math.max(1, Math.pow(10, Math.min(cultRate().l, 6)));
-        game.cultivation += add;
+        game.cultivation += add * (game.reincarnations + 1);
         if (game.disciples > 0) game.stones += game.disciples * 2;
     }
     update();
 }, 1000);
-
 setInterval(saveGame, 30000);
 
 loadGame();
