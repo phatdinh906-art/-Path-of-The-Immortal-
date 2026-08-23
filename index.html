@@ -63,6 +63,8 @@ input[type=number]{width:100%;padding:6px;border-radius:4px;border:1px solid #66
     <div class="bar"><div id="hpBar" class="fill hp" style="width:100%"></div></div>
     <div class="stat"><span>Cultivation</span><span id="cultText">0 / 100</span></div>
     <div class="bar"><div id="cultBar" class="fill cult" style="width:0%"></div></div>
+    <div class="stat"><span>Karma</span><span id="karmaText">0</span></div>
+    <div class="bar"><div id="karmaBar" class="fill" style="width:0%; background:#c47b3a"></div></div>
     <div class="card">
         <div class="stat"><span>⚔ Attack</span><strong id="atk">10</strong></div>
         <div class="stat"><span>🛡 Defense</span><strong id="def">5</strong></div>
@@ -79,20 +81,20 @@ input[type=number]{width:100%;padding:6px;border-radius:4px;border:1px solid #66
 
 <!-- CENTER -->
 <section class="panel">
-    <div class="tabs">
-        <button class="tab" onclick="showTab('cultivation')">Cultivation</button>
-        <button class="tab" onclick="showTab('weapons')">Weapons</button>
-        <button class="tab" onclick="showTab('techniques')">Techniques</button>
-        <button class="tab" onclick="showTab('combat')">Combat</button>
-        <button class="tab" onclick="showTab('explore')">Explore</button>
-        <button class="tab" onclick="showTab('dao')">Dao Laws</button>
-        <button class="tab" onclick="showTab('relics')">Relics</button>
-        <button class="tab" onclick="showTab('titles')">Titles</button>
-        <button class="tab" onclick="showTab('sect')">Sect</button>
-        <button class="tab" onclick="showTab('inventory')">Inventory</button>
-        <button class="tab" id="reincTabBtn" onclick="showTab('reincarnation')" style="display:none">Reincarnation</button>
-        <button class="tab" onclick="showTab('save')">Save</button>
-    </div>
+  <div class="tabs">
+    <button class="tab" onclick="showTab('cultivation')">Cultivation</button>
+    <button class="tab" id="tab-weapons" onclick="showTab('weapons')" style="display:none">Weapons</button>
+    <button class="tab" id="tab-techniques" onclick="showTab('techniques')" style="display:none">Techniques</button>
+    <button class="tab" onclick="showTab('combat')">Combat</button>
+    <button class="tab" onclick="showTab('explore')">Explore</button>
+    <button class="tab" id="tab-dao" onclick="showTab('dao')" style="display:none">Dao Laws</button>
+    <button class="tab" id="tab-relics" onclick="showTab('relics')" style="display:none">Relics</button>
+    <button class="tab" id="tab-titles" onclick="showTab('titles')" style="display:none">Titles</button>
+    <button class="tab" id="tab-sect" onclick="showTab('sect')" style="display:none">Sect</button>
+    <button class="tab" id="tab-inventory" onclick="showTab('inventory')" style="display:none">Inventory</button>
+    <button class="tab" id="tab-reincarnation" onclick="showTab('reincarnation')" style="display:none">Reincarnation</button>
+    <button class="tab" onclick="showTab('save')">Save</button>
+  </div>
 
     <div id="cultivation">
         <div class="card">
@@ -421,7 +423,9 @@ function canSeeReincarnation() {
 
 function update() {
     const showReinc = canSeeReincarnation();
-
+    document.getElementById("karmaText").textContent = game.karma;
+    document.getElementById("karmaBar").style.width = Math.min(100, Math.abs(game.karma) / 100) + "%";
+    document.getElementById("karmaBar").style.background = game.karma >= 0 ? "#7dca8b" : "#dc7272";
     document.getElementById("realm").textContent = game.unknownUnlocked ? "??? — Unknown Realm" : normalRealms[game.realm].name;
     document.getElementById("level").textContent = game.level;
     document.getElementById("currentPath").textContent = game.path || "None";
@@ -497,7 +501,8 @@ function update() {
     renderInventory();
     renderAreas();
     renderEnemy();
-    checkTitles();
+    checkTitles()
+    updateTabVisibility();
 }
 
 function upgradeCost(stat) {
@@ -1057,6 +1062,26 @@ function importSaveCode() {
 function showTab(id) {
     ["cultivation","weapons","techniques","combat","explore","dao","relics","titles","sect","inventory","reincarnation","save"]
         .forEach(t => document.getElementById(t).classList.toggle("hidden", t !== id));
+}
+function updateTabVisibility() {
+    // Always visible
+    document.getElementById("tab-weapons").style.display = "";
+    document.getElementById("tab-techniques").style.display = "";
+    document.getElementById("tab-titles").style.display = "";
+    document.getElementById("tab-sect").style.display = "";
+    document.getElementById("tab-inventory").style.display = "";
+
+    // Dao Laws - after first reincarnation
+    const daoTab = document.getElementById("tab-dao");
+    if (daoTab) daoTab.style.display = game.reincarnations >= 1 ? "" : "none";
+
+    // Relics - after Unknown Realm
+    const relicsTab = document.getElementById("tab-relics");
+    if (relicsTab) relicsTab.style.display = game.unknownUnlocked ? "" : "none";
+
+    // Reincarnation - after maximizing Immortal Ascension
+    const reincTab = document.getElementById("tab-reincarnation");
+    if (reincTab) reincTab.style.display = canSeeReincarnation() ? "" : "none";
 }
 
 setInterval(() => {
