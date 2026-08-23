@@ -547,14 +547,21 @@ function breakthrough() {
 }
 
 function reincarnate() {
-    if (game.unknownUnlocked) { notify("You have transcended normal reincarnation"); return; }
-    const final = normalRealms.length - 1;
-    if (game.realm !== final || game.cultivation < normalRealms[final].req) {
-        notify("Max Immortal Ascension first");
+    if (!game.unknownUnlocked) {
+        notify("You must reach Unknown Realm first");
         return;
     }
-    const power = totalAtk().add(totalDef()).mul(game.level);
-    const gained = Math.max(1, Math.floor(Math.max(0, power.l)));
+    const threshold = 15000000; // 15 million cultivation threshold per reincarnation
+    if (game.cultivation < threshold) {
+        notify("Not enough cultivation for reincarnation");
+        return;
+    }
+    // Calculate reincarnations gained based on cultivation / 15 million
+    const gained = Math.floor(game.cultivation / threshold);
+    if (gained < 1) {
+        notify("Not enough cultivation for reincarnation");
+        return;
+    }
     const next = game.reincarnations + gained + (game.relics.includes("eternity_shard") ? 1 : 0);
 
     if (!confirm(`Gain +${gained} reincarnations?\n${format(game.reincarnations)} → ${format(next)}`)) return;
@@ -584,7 +591,6 @@ function reincarnate() {
     log(`Reincarnated +${gained} → ${format(game.reincarnations)}`, "mythic");
     notify("+" + gained + " Reincarnations");
     update();
-    saveGame();
 }
 
 function upgrade(stat) {
