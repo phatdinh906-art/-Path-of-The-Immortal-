@@ -468,16 +468,32 @@ function upgradeCost(stat) {
 ========================================================= */
 function convertStones(t) {
     let cost = 0, gain = 0;
-    if (t === 1) { cost = 100; gain = 100; }
-    else if (t === 2) { cost = 1000; gain = 1100; }
-    else if (t === 3) { cost = 10000; gain = 12500; }
-    else return;
+    if (!game.unknownUnlocked) {
+        // Original fixed costs/gains
+        if (t === 1) { cost = 100; gain = 100; }
+        else if (t === 2) { cost = 1000; gain = 1100; }
+        else if (t === 3) { cost = 10000; gain = 12500; }
+    } else {
+        // Infinite scaling after Unknown Realm
+        const base = Math.max(game.cultivation, 1);
+        if (t === 1) {
+            cost = Math.floor(100 * Math.log10(base + 10));
+            gain = cost * 1.2;
+        } else if (t === 2) {
+            cost = Math.floor(1000 * Math.log10(base + 10));
+            gain = cost * 1.5;
+        } else if (t === 3) {
+            cost = Math.floor(10000 * Math.log10(base + 10));
+            gain = cost * 2;
+        }
+    }
     if (game.stones < cost) return;
     game.stones -= cost;
     game.cultivation += gain;
     game.karma += 1;
     update();
 }
+
 
 function meditate() {
     const gain = Math.max(5, Math.pow(10, Math.min(cultRate().l, 8)));
