@@ -13,7 +13,7 @@ h1{color:#dfc56c;letter-spacing:2px;font-size:1.6rem}
 main{max-width:1500px;margin:auto;padding:12px;display:grid;grid-template-columns:280px 1fr 300px;gap:12px}
 .panel{background:#10151e;border:1px solid #363a42;border-radius:8px;padding:12px}
 .panel h2{color:#d5b963;font-size:16px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #38342a}
-button{background:#171d29;color:#eee7d2;border:1px solid #665735;padding:8px 10px;border-radius:5px;cursor:pointer;font-weight:bold;font-size:13px}
+button{background:#171d29;color:#eee7d2;border:1px solid #665735;padding:8px 10px;border-radius:5px;cursor:pointer;font-weight:bold;font-size:13px;transition:0.15s}
 button:hover{background:#292f3d}
 button:disabled{opacity:.4;cursor:not-allowed}
 .full{width:100%;margin:3px 0}
@@ -27,6 +27,7 @@ button:disabled{opacity:.4;cursor:not-allowed}
 .small{font-size:11px;color:#99978c}
 .tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
 .tab{font-size:11px;padding:6px 8px}
+.active-tab{background:#292f3d !important;color:#dfc56c !important;border-color:#d5b963 !important}
 .hidden{display:none !important}
 .log{height:200px;overflow-y:auto;background:#080b10;border:1px solid #30343c;padding:8px;font-size:12px}
 .good{color:#7dca8b}.bad{color:#dc7272}.gold{color:#e1c25c}.mythic{color:#c471ed}
@@ -82,18 +83,18 @@ input[type=number]{width:100%;padding:6px;border-radius:4px;border:1px solid #66
 <!-- CENTER -->
 <section class="panel">
   <div class="tabs">
-    <button class="tab" onclick="showTab('cultivation')">Cultivation</button>
-    <button class="tab" id="tab-weapons" onclick="showTab('weapons')" style="display:none">Weapons</button>
-    <button class="tab" id="tab-techniques" onclick="showTab('techniques')" style="display:none">Techniques</button>
-    <button class="tab" onclick="showTab('combat')">Combat</button>
-    <button class="tab" onclick="showTab('explore')">Explore</button>
-    <button class="tab" id="tab-dao" onclick="showTab('dao')" style="display:none">Dao Laws</button>
-    <button class="tab" id="tab-relics" onclick="showTab('relics')" style="display:none">Relics</button>
-    <button class="tab" id="tab-titles" onclick="showTab('titles')" style="display:none">Titles</button>
-    <button class="tab" id="tab-sect" onclick="showTab('sect')" style="display:none">Sect</button>
-    <button class="tab" id="tab-inventory" onclick="showTab('inventory')" style="display:none">Inventory</button>
-    <button class="tab" id="tab-reincarnation" onclick="showTab('reincarnation')" style="display:none">Reincarnation</button>
-    <button class="tab" onclick="showTab('save')">Save</button>
+    <button class="tab" id="tab-cultivation" onclick="showTab('cultivation')">Cultivation</button>
+    <button class="tab" id="tab-weapons" onclick="showTab('weapons')">Weapons</button>
+    <button class="tab" id="tab-techniques" onclick="showTab('techniques')">Techniques</button>
+    <button class="tab" id="tab-combat" onclick="showTab('combat')">Combat</button>
+    <button class="tab" id="tab-explore" onclick="showTab('explore')">Explore</button>
+    <button class="tab" id="tab-dao" onclick="showTab('dao')">Dao Laws</button>
+    <button class="tab" id="tab-relics" onclick="showTab('relics')">Relics</button>
+    <button class="tab" id="tab-titles" onclick="showTab('titles')">Titles</button>
+    <button class="tab" id="tab-sect" onclick="showTab('sect')">Sect</button>
+    <button class="tab" id="tab-inventory" onclick="showTab('inventory')">Inventory</button>
+    <button class="tab" id="tab-reincarnation" onclick="showTab('reincarnation')">Reincarnation</button>
+    <button class="tab" id="tab-save" onclick="showTab('save')">Save</button>
   </div>
 
     <div id="cultivation">
@@ -243,10 +244,24 @@ class LogNum {
         if (this.l === -Infinity) return o;
         if (o.l === -Infinity) return this;
         const d = this.l - o.l;
-        if (d > 12) return this;
-        if (d < -12) return o;
+        if (d > 14) return this;
+        if (d < -14) return o;
         const m = Math.max(this.l, o.l);
         return new LogNum(m + Math.log10(Math.pow(10, this.l - m) + Math.pow(10, o.l - m)));
+    }
+    sub(o) {
+        o = LogNum.from(o);
+        if (this.l === -Infinity) return LogNum.zero();
+        if (o.l === -Infinity) return this;
+        if (this.l <= o.l) return LogNum.zero(); 
+        const d = this.l - o.l;
+        if (d > 14) return this;
+        return new LogNum(this.l + Math.log10(1 - Math.pow(10, -d)));
+    }
+    toNumber() {
+        if (this.l === -Infinity) return 0;
+        if (this.l > 308) return Infinity;
+        return Math.pow(10, this.l);
     }
     format() {
         if (this.l === -Infinity) return "0";
@@ -445,17 +460,14 @@ function update() {
     document.getElementById("defCost").textContent = format(upgradeCost("def"));
     document.getElementById("masteryBonus").textContent = `+${game.weaponMastery * 5}%`;
 
-    // Completely hide reincarnation information
     document.getElementById("reincarnationCount").textContent = showReinc ? format(game.reincarnations) : "???";
     document.getElementById("prestigeBonus").textContent = showReinc ? "×" + prestige().format() : "???";
     document.getElementById("powerSummary").textContent = showReinc ? "×" + prestige().format() + " from " + format(game.reincarnations) + " reincarnations" : "A greater path is still sealed...";
     document.getElementById("pathDesc").textContent = game.unknownUnlocked ? "Beyond the known Dao." : "A nameless mortal seeking immortality.";
 
-    // Hide buttons and tab
     document.getElementById("reincarnateBtn").style.display = showReinc ? "" : "none";
-    document.getElementById("reincTabBtn").style.display = showReinc ? "" : "none";
+    updateTabVisibility(); 
 
-    // Chaos panel
     const cp = document.getElementById("chaosPanel");
     if (game.unknownUnlocked) {
         cp.style.display = "block";
@@ -469,7 +481,6 @@ function update() {
     document.getElementById("discipleCount").textContent = game.disciples;
     document.getElementById("activeTitles").textContent = game.activeTitles.length ? game.activeTitles.join(", ") : "None";
 
-    // Guidance - no reincarnation spoilers
     const tips = [];
     tips.push("• Meditate and convert Spirit Stones");
     tips.push("• Explore areas and fight enemies");
@@ -502,7 +513,6 @@ function update() {
     renderAreas();
     renderEnemy();
     checkTitles()
-    updateTabVisibility();
 }
 
 function upgradeCost(stat) {
@@ -546,45 +556,45 @@ function breakthrough() {
     const req = normalRealms[game.realm].req;
 
     if (game.realm === normalRealms.length - 1) {
-    if (game.cultivation < req) return notify("Not maxed");
-    if (game.laws.length < 5) return notify("Master all 5 Dao Laws first");
+        if (game.cultivation < req) return notify("Not maxed");
+        if (game.laws.length < 5) return notify("Master all 5 Dao Laws first");
 
-    const leftover = Math.max(0, game.cultivation - req);
+        const leftover = Math.max(0, game.cultivation - req);
 
-    game.unknownUnlocked = true;
-    game.cultivation = Math.max(1, leftover);   // keep leftover cultivation
-    game.maxHp *= 10;
-    game.hp = game.maxHp;
-    game.baseAtk *= 5;
-    game.baseDef *= 5;
+        game.unknownUnlocked = true;
+        game.cultivation = Math.max(1, leftover);   
+        game.maxHp *= 10;
+        game.hp = game.maxHp;
+        game.baseAtk *= 5;
+        game.baseDef *= 5;
 
-    if (!game.weapons.includes(9)) {
-        game.weapons.push(9);
-        game.weaponMastery = Math.max(game.weaponMastery, 9);
-        game.equippedWeapon = 9;
+        if (!game.weapons.includes(9)) {
+            game.weapons.push(9);
+            game.weaponMastery = Math.max(game.weaponMastery, 9);
+            game.equippedWeapon = 9;
+        }
+
+        log("A greater path opens!", "mythic");
+        notify("Unknown Realm unlocked!" + (leftover > 0 ? ` (+${format(leftover)} leftover)` : ""));
+        update();
+        return;
     }
 
-    log("A greater path opens!", "mythic");
-    notify("Unknown Realm unlocked!" + (leftover > 0 ? ` (+${format(leftover)} leftover)` : ""));
-    update();
-    return;
-}
-
     if (game.cultivation < req) return notify("Not enough cultivation");
+    
     if (chance(0.55 + game.realm * 0.03)) {
-    const req = normalRealms[game.realm].req;
-    const leftover = Math.max(0, game.cultivation - req);  // keep excess
+        const leftover = Math.max(0, game.cultivation - req);  
 
-    game.realm++;
-    game.cultivation = leftover;        // carry over leftover cultivation
-    game.baseAtk *= 1.18;
-    game.baseDef *= 1.18;
-    game.maxHp *= 1.15;
-    game.hp = game.maxHp;
+        game.realm++;
+        game.cultivation = leftover;        
+        game.baseAtk *= 1.18;
+        game.baseDef *= 1.18;
+        game.maxHp *= 1.15;
+        game.hp = game.maxHp;
 
-    log(normalRealms[game.realm].name, "good");
-    notify("Breakthrough success" + (leftover > 0 ? ` (+${format(leftover)} leftover)` : ""));
-} else {
+        log(normalRealms[game.realm].name, "good");
+        notify("Breakthrough success" + (leftover > 0 ? ` (+${format(leftover)} leftover)` : ""));
+    } else {
         game.cultivation *= 0.7;
         game.hp = Math.max(1, game.hp * 0.7);
         notify("Failed");
@@ -625,6 +635,7 @@ function reincarnate() {
         path: keptPath, sectName: keptSect, disciples: keptDisciples,
         karma: 0, fusionActive: false,
         combat: false, enemy: null, defending: false,
+        unknownUnlocked: false,
         lastSave: Date.now()
     });
 
@@ -727,14 +738,19 @@ function useTechnique(i) {
     if (!game.combat) return;
     const t = techniques[i];
     log(t.name, "good");
+    let dmg = totalAtk().mul(t.skill || 1);
+
     if (game.enemy.chaos) {
-        game.enemy.hp = game.enemy.hp.mul(0.5);
-        if (game.enemy.hp.l < 0) victory();
+        let actualDmg = dmg.sub(game.enemy.def);
+        if (actualDmg.l < game.enemy.hp.l - 2) actualDmg = game.enemy.hp.mul(0.1); 
+        game.enemy.hp = game.enemy.hp.sub(actualDmg);
+        if (game.enemy.hp.l === -Infinity || game.enemy.hp.l < 0) victory();
     } else {
-        game.enemy.hp -= 80 * (t.skill || 1);
+        let actualDmg = Math.max(dmg.toNumber() * 0.1, dmg.toNumber() - game.enemy.def);
+        game.enemy.hp -= actualDmg;
         if (game.enemy.hp <= 0) victory();
     }
-    enemyTurn();
+    if (game.enemy) enemyTurn();
     update();
 }
 
@@ -762,7 +778,6 @@ function findArtifact() {
 
 function renderLaws() {
     const box = document.getElementById("lawList");
-    // Dao Laws stay hidden until first reincarnation
     if (game.reincarnations < 1) {
         box.innerHTML = `<div class="card small">A mysterious power is sealed...</div>`;
         return;
@@ -933,26 +948,42 @@ function renderEnemy() {
         return;
     }
     document.getElementById("combatControls").classList.remove("hidden");
-    const hp = e.chaos ? e.hp.format() : format(e.hp);
-    const max = e.chaos ? e.maxHp.format() : format(e.maxHp);
+    
+    const hp = format(e.hp);
+    const max = format(e.maxHp);
+    
+    let hpPct;
+    if (e.chaos) {
+        hpPct = Math.max(0, Math.min(100, Math.pow(10, e.hp.l - e.maxHp.l) * 100));
+    } else {
+        hpPct = Math.max(0, Math.min(100, (e.hp / e.maxHp) * 100));
+    }
+    if (isNaN(hpPct)) hpPct = 0;
+
     box.innerHTML = `<div class="enemy">
         <div class="stat"><strong>${e.name}</strong><span>${e.chaos ? "Chaos " + e.stage : ""}</span></div>
         <div class="stat">HP ${hp} / ${max}</div>
-        <div class="bar"><div class="fill hp" style="width:60%"></div></div>
+        <div class="bar"><div class="fill hp" style="width:${hpPct}%"></div></div>
     </div>`;
 }
 
 function playerAttack() {
     if (!game.combat) return;
     log("Attack", "good");
+    let dmg = totalAtk();
+    
     if (game.enemy.chaos) {
-        game.enemy.hp = game.enemy.hp.mul(0.6);
-        if (game.enemy.hp.l < 0) victory();
+        let actualDmg = dmg.sub(game.enemy.def);
+        if (actualDmg.l < game.enemy.hp.l - 2) actualDmg = game.enemy.hp.mul(0.05); // Min 5% damage if too weak
+        game.enemy.hp = game.enemy.hp.sub(actualDmg);
+        if (game.enemy.hp.l === -Infinity || game.enemy.hp.l < 0) victory();
     } else {
-        game.enemy.hp -= 60;
+        let actualDmg = Math.max(dmg.toNumber() * 0.1, dmg.toNumber() - game.enemy.def);
+        game.enemy.hp -= actualDmg;
         if (game.enemy.hp <= 0) victory();
     }
-    enemyTurn();
+
+    if (game.enemy) enemyTurn();
     update();
 }
 
@@ -972,13 +1003,32 @@ function useFusion() {
 
 function enemyTurn() {
     if (!game.combat) return;
-    game.hp = Math.max(1, game.hp * (game.defending ? 0.95 : 0.88));
+    let pDef = totalDef();
+    
+    if (game.unknownUnlocked && game.enemy.chaos) {
+        let eAtk = game.enemy.atk;
+        let ratio = eAtk.l - pDef.l;
+        let dmgPct = 0.1;
+        if (ratio > 0) dmgPct += ratio * 0.1;
+        if (ratio < 0) dmgPct /= (1 + Math.abs(ratio));
+        if (game.defending) dmgPct *= 0.5;
+        dmgPct = Math.min(0.99, Math.max(0.01, dmgPct));
+        game.hp -= game.maxHp * dmgPct;
+    } else {
+        let eAtk = game.enemy.atk;
+        let actualDmg = Math.max(eAtk * 0.1, eAtk - pDef.toNumber());
+        if (game.defending) actualDmg *= 0.5;
+        game.hp -= actualDmg;
+    }
+    
     game.defending = false;
-    if (game.hp <= 1) {
+    
+    if (game.hp <= 0) {
         game.combat = false;
         game.enemy = null;
+        game.hp = game.maxHp * 0.1; // Revive lightly
         game.stones = Math.floor(game.stones * 0.9);
-        notify("Defeated");
+        notify("Defeated (Lost 10% Stones)");
     }
 }
 
@@ -1007,7 +1057,7 @@ function renderRealms() {
     }).join("") + (game.unknownUnlocked ? `<div class="realm-row"><span>∞ Unknown Realm</span><span>☯</span></div>` : "");
 }
 
-const SAVE_KEY = "poi_hidden_reinc_v1";
+const SAVE_KEY = "poi_fixed_save_v1"; // Changed key to ensure old, broken, looping-crash saves don't ruin the execution
 function saveGame() {
     game.lastSave = Date.now();
     localStorage.setItem(SAVE_KEY, JSON.stringify(game));
@@ -1060,28 +1110,47 @@ function importSaveCode() {
 }
 
 function showTab(id) {
-    ["cultivation","weapons","techniques","combat","explore","dao","relics","titles","sect","inventory","reincarnation","save"]
-        .forEach(t => document.getElementById(t).classList.toggle("hidden", t !== id));
+    const tabs = ["cultivation","weapons","techniques","combat","explore","dao","relics","titles","sect","inventory","reincarnation","save"];
+    tabs.forEach(t => {
+        const el = document.getElementById(t);
+        if (el) el.classList.toggle("hidden", t !== id);
+        
+        const btn = document.getElementById("tab-" + t);
+        if (btn) {
+            if (t === id) btn.classList.add("active-tab");
+            else btn.classList.remove("active-tab");
+        }
+    });
 }
+
 function updateTabVisibility() {
-    // Always visible
-    document.getElementById("tab-weapons").style.display = "";
-    document.getElementById("tab-techniques").style.display = "";
-    document.getElementById("tab-titles").style.display = "";
-    document.getElementById("tab-sect").style.display = "";
-    document.getElementById("tab-inventory").style.display = "";
+    let activeHidden = false;
 
-    // Dao Laws - after first reincarnation
-    const daoTab = document.getElementById("tab-dao");
-    if (daoTab) daoTab.style.display = game.reincarnations >= 1 ? "" : "none";
+    function setTab(id, contentId, show) {
+        const btn = document.getElementById(id);
+        if (btn) btn.style.display = show ? "inline-block" : "none";
+        
+        const content = document.getElementById(contentId);
+        if (!show && content && !content.classList.contains("hidden")) {
+            activeHidden = true; // Flags if we just hid the tab the user was actively looking at
+        }
+    }
 
-    // Relics - after Unknown Realm
-    const relicsTab = document.getElementById("tab-relics");
-    if (relicsTab) relicsTab.style.display = game.unknownUnlocked ? "" : "none";
+    setTab("tab-weapons", "weapons", true);
+    setTab("tab-techniques", "techniques", true);
+    setTab("tab-titles", "titles", true);
+    setTab("tab-sect", "sect", true);
+    setTab("tab-inventory", "inventory", true);
+    
+    setTab("tab-dao", "dao", game.reincarnations >= 1);
+    setTab("tab-relics", "relics", game.unknownUnlocked === true);
+    
+    const canSeeReinc = game.realm === normalRealms.length - 1 && game.cultivation >= normalRealms[normalRealms.length - 1].req;
+    setTab("tab-reincarnation", "reincarnation", canSeeReinc);
 
-    // Reincarnation - after maximizing Immortal Ascension
-    const reincTab = document.getElementById("tab-reincarnation");
-    if (reincTab) reincTab.style.display = canSeeReincarnation() ? "" : "none";
+    if (activeHidden) {
+        showTab("cultivation"); // Automatically bump them back to cultivation so they don't get stuck on a blank screen
+    }
 }
 
 setInterval(() => {
@@ -1104,6 +1173,7 @@ setInterval(saveGame, 30000);
 
 loadGame();
 log("Game ready", "good");
+if (game.combat) showTab("combat"); else showTab("cultivation");
 update();
 </script>
 </body>
